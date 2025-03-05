@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=exp_4                # Job name
-#SBATCH --output=ludwig_experiment_4_%j.out  # Output file with job ID
-#SBATCH --error=ludwig_experiment_4_%j.err   # Error file with job ID
+#SBATCH --output=%j.out  # Output file with job ID
+#SBATCH --error=%j.err   # Error file with job ID
 #SBATCH --ntasks=1                      # Number of tasks
 #SBATCH --cpus-per-task=10              # Number of CPU cores
 #SBATCH --mem=1000G                     # Memory allocation
@@ -9,10 +9,10 @@
 #SBATCH --time=5-02:00:00               # Time limit (days-HH:MM:SS)
 
 # Dataset path
-DATASET_PATH="./../../../trident/TCGA_BRCA/tcga_patches_ludwig.csv"
+DATASET_PATH="./../../../../trident/TCGA_BRCA/ludwig_experiments/output/experiment_6/tcga_patches_ludwig.csv"
 
 # Random seed
-SEED=42
+SEED=100
 
 # Initialize Conda environment
 eval "$(conda shell.bash hook)" || {
@@ -31,7 +31,7 @@ export LD_LIBRARY_PATH=${CONDA_PREFIX}/lib:${LD_LIBRARY_PATH}
 
 # Verify Python script exists
 if [ ! -f "pytorch_test.py" ]; then
-    echo "Error: train_tcga_pytorch.py not found in current directory"
+    echo "Error: pytorch_test.py not found in current directory"
     exit 1
 fi
 
