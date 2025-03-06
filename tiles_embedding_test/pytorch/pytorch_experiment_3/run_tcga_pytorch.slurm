@@ -12,7 +12,7 @@
 DATASET_PATH="./../../../../trident/TCGA_BRCA/convert_h5_to_csv/csv_files/tcga_patches_with_labels.csv"
 
 # Random seed
-SEED=43
+SEED=42
 
 # Initialize Conda environment
 eval "$(conda shell.bash hook)" || {

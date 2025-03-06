@@ -1,4 +1,0 @@
-Setting random seed to 100
-Using device: cuda
-Loading data for split 0 from ./../../../../trident/TCGA_BRCA/ludwig_experiments/output/experiment_6/tcga_patches_ludwig.csv
-Parsing embeddings for split 0

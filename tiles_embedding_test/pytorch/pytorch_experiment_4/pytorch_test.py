@@ -20,7 +20,7 @@ class TCGADataset(Dataset):
 
         # Extract features from columns feature_0 to feature_1535
         feature_cols = [f'feature_{i}' for i in range(1536)]
-        print("Extracting features", flush=True)  # Fixed typo: "feature" to "features"
+        print("Extracting feature", flush=True)
         self.embeddings = np.array(self.data[feature_cols].values, dtype=np.float32)
 
         # Extract labels
@@ -181,31 +181,9 @@ def main():
     df = df.merge(split_df, on='sample_name', how='left')
 
     # Create datasets
-    train_df = df[df['split'] == 0]
-    val_df = df[df['split'] == 1]
-    test_df = df[df['split'] == 2]
-
-    # Count labels in each split
-    print("\nLabel counts in each split:", flush=True)
-    print("Training split:", flush=True)
-    train_label_counts = train_df['label'].value_counts().sort_index()
-    print(f"  Label 0: {train_label_counts.get(0, 0)}", flush=True)
-    print(f"  Label 1: {train_label_counts.get(1, 0)}", flush=True)
-
-    print("Validation split:", flush=True)
-    val_label_counts = val_df['label'].value_counts().sort_index()
-    print(f"  Label 0: {val_label_counts.get(0, 0)}", flush=True)
-    print(f"  Label 1: {val_label_counts.get(1, 0)}", flush=True)
-
-    print("Testing split:", flush=True)
-    test_label_counts = test_df['label'].value_counts().sort_index()
-    print(f"  Label 0: {test_label_counts.get(0, 0)}", flush=True)
-    print(f"  Label 1: {test_label_counts.get(1, 0)}", flush=True)
-
-    # Create datasets
-    train_dataset = TCGADataset(train_df)
-    val_dataset = TCGADataset(val_df)
-    test_dataset = TCGADataset(test_df)
+    train_dataset = TCGADataset(df[df['split'] == 0])
+    val_dataset = TCGADataset(df[df['split'] == 1])
+    test_dataset = TCGADataset(df[df['split'] == 2])
 
     print(f"Train dataset size: {len(train_dataset)}", flush=True)
     print(f"Validation dataset size: {len(val_dataset)}", flush=True)
