@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/share/lab_goecks/TCGA_deep_learning/tcga_manuscript/tiles_embedding_test/pytorch/pytorch_test_xvalidation.py", line 279, in <module>
+    main()
+  File "/share/lab_goecks/TCGA_deep_learning/tcga_manuscript/tiles_embedding_test/pytorch/pytorch_test_xvalidation.py", line 261, in main
+    avg_metrics = {key: np.mean([m[key] for m in fold_metrics[split_key]]) for key in metrics_keys}
+  File "/share/lab_goecks/TCGA_deep_learning/tcga_manuscript/tiles_embedding_test/pytorch/pytorch_test_xvalidation.py", line 261, in <dictcomp>
+    avg_metrics = {key: np.mean([m[key] for m in fold_metrics[split_key]]) for key in metrics_keys}
+KeyError: 'validation'

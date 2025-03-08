@@ -4180,3 +4180,1749 @@ Batch 10000/107635 completed, running loss: 0.0031
 Batch 20000/107635 completed, running loss: 0.0038
 Batch 30000/107635 completed, running loss: 0.0035
 Batch 40000/107635 completed, running loss: 0.0035
+Batch 50000/107635 completed, running loss: 0.0036
+Batch 60000/107635 completed, running loss: 0.0035
+Batch 70000/107635 completed, running loss: 0.0035
+Batch 80000/107635 completed, running loss: 0.0035
+Batch 90000/107635 completed, running loss: 0.0035
+Batch 100000/107635 completed, running loss: 0.0036
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 8/50
+Train Loss: 0.0036, Train Acc: 0.9988
+Val Loss: 5.0553, Val Acc: 0.6656, ROC-AUC: 0.6993
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0028
+Batch 20000/107635 completed, running loss: 0.0031
+Batch 30000/107635 completed, running loss: 0.0033
+Batch 40000/107635 completed, running loss: 0.0033
+Batch 50000/107635 completed, running loss: 0.0032
+Batch 60000/107635 completed, running loss: 0.0031
+Batch 70000/107635 completed, running loss: 0.0031
+Batch 80000/107635 completed, running loss: 0.0031
+Batch 90000/107635 completed, running loss: 0.0032
+Batch 100000/107635 completed, running loss: 0.0032
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 9/50
+Train Loss: 0.0031, Train Acc: 0.9989
+Val Loss: 6.3061, Val Acc: 0.6472, ROC-AUC: 0.6761
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0026
+Batch 20000/107635 completed, running loss: 0.0027
+Batch 30000/107635 completed, running loss: 0.0027
+Batch 40000/107635 completed, running loss: 0.0026
+Batch 50000/107635 completed, running loss: 0.0026
+Batch 60000/107635 completed, running loss: 0.0027
+Batch 70000/107635 completed, running loss: 0.0026
+Batch 80000/107635 completed, running loss: 0.0027
+Batch 90000/107635 completed, running loss: 0.0027
+Batch 100000/107635 completed, running loss: 0.0027
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 10/50
+Train Loss: 0.0028, Train Acc: 0.9991
+Val Loss: 6.7583, Val Acc: 0.6545, ROC-AUC: 0.6747
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0029
+Batch 20000/107635 completed, running loss: 0.0023
+Batch 30000/107635 completed, running loss: 0.0027
+Batch 40000/107635 completed, running loss: 0.0027
+Batch 50000/107635 completed, running loss: 0.0027
+Batch 60000/107635 completed, running loss: 0.0027
+Batch 70000/107635 completed, running loss: 0.0027
+Batch 80000/107635 completed, running loss: 0.0027
+Batch 90000/107635 completed, running loss: 0.0028
+Batch 100000/107635 completed, running loss: 0.0027
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 11/50
+Train Loss: 0.0026, Train Acc: 0.9992
+Val Loss: 7.1599, Val Acc: 0.6477, ROC-AUC: 0.6649
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0016
+Batch 20000/107635 completed, running loss: 0.0021
+Batch 30000/107635 completed, running loss: 0.0022
+Batch 40000/107635 completed, running loss: 0.0021
+Batch 50000/107635 completed, running loss: 0.0022
+Batch 60000/107635 completed, running loss: 0.0022
+Batch 70000/107635 completed, running loss: 0.0022
+Batch 80000/107635 completed, running loss: 0.0022
+Batch 90000/107635 completed, running loss: 0.0022
+Batch 100000/107635 completed, running loss: 0.0023
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 12/50
+Train Loss: 0.0023, Train Acc: 0.9992
+Val Loss: 8.5843, Val Acc: 0.6419, ROC-AUC: 0.6524
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0014
+Batch 20000/107635 completed, running loss: 0.0016
+Batch 30000/107635 completed, running loss: 0.0020
+Batch 40000/107635 completed, running loss: 0.0019
+Batch 50000/107635 completed, running loss: 0.0020
+Batch 60000/107635 completed, running loss: 0.0020
+Batch 70000/107635 completed, running loss: 0.0020
+Batch 80000/107635 completed, running loss: 0.0020
+Batch 90000/107635 completed, running loss: 0.0020
+Batch 100000/107635 completed, running loss: 0.0021
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 13/50
+Train Loss: 0.0020, Train Acc: 0.9994
+Val Loss: 9.3615, Val Acc: 0.6164, ROC-AUC: 0.6210
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0017
+Batch 20000/107635 completed, running loss: 0.0020
+Batch 30000/107635 completed, running loss: 0.0019
+Batch 40000/107635 completed, running loss: 0.0019
+Batch 50000/107635 completed, running loss: 0.0019
+Batch 60000/107635 completed, running loss: 0.0019
+Batch 70000/107635 completed, running loss: 0.0020
+Batch 80000/107635 completed, running loss: 0.0020
+Batch 90000/107635 completed, running loss: 0.0020
+Batch 100000/107635 completed, running loss: 0.0020
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 14/50
+Train Loss: 0.0021, Train Acc: 0.9994
+Val Loss: 9.3553, Val Acc: 0.5960, ROC-AUC: 0.5912
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0019
+Batch 20000/107635 completed, running loss: 0.0018
+Batch 30000/107635 completed, running loss: 0.0017
+Batch 40000/107635 completed, running loss: 0.0018
+Batch 50000/107635 completed, running loss: 0.0018
+Batch 60000/107635 completed, running loss: 0.0018
+Batch 70000/107635 completed, running loss: 0.0018
+Batch 80000/107635 completed, running loss: 0.0019
+Batch 90000/107635 completed, running loss: 0.0018
+Batch 100000/107635 completed, running loss: 0.0018
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 15/50
+Train Loss: 0.0019, Train Acc: 0.9995
+Val Loss: 8.2088, Val Acc: 0.6472, ROC-AUC: 0.6620
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0021
+Batch 20000/107635 completed, running loss: 0.0020
+Batch 30000/107635 completed, running loss: 0.0016
+Batch 40000/107635 completed, running loss: 0.0016
+Batch 50000/107635 completed, running loss: 0.0017
+Batch 60000/107635 completed, running loss: 0.0016
+Batch 70000/107635 completed, running loss: 0.0017
+Batch 80000/107635 completed, running loss: 0.0018
+Batch 90000/107635 completed, running loss: 0.0018
+Batch 100000/107635 completed, running loss: 0.0018
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 16/50
+Train Loss: 0.0018, Train Acc: 0.9994
+Val Loss: 9.4843, Val Acc: 0.6166, ROC-AUC: 0.6176
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0013
+Batch 20000/107635 completed, running loss: 0.0012
+Batch 30000/107635 completed, running loss: 0.0012
+Batch 40000/107635 completed, running loss: 0.0013
+Batch 50000/107635 completed, running loss: 0.0014
+Batch 60000/107635 completed, running loss: 0.0014
+Batch 70000/107635 completed, running loss: 0.0014
+Batch 80000/107635 completed, running loss: 0.0015
+Batch 90000/107635 completed, running loss: 0.0015
+Batch 100000/107635 completed, running loss: 0.0016
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 17/50
+Train Loss: 0.0016, Train Acc: 0.9995
+Val Loss: 9.9394, Val Acc: 0.6211, ROC-AUC: 0.6309
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0015
+Batch 20000/107635 completed, running loss: 0.0012
+Batch 30000/107635 completed, running loss: 0.0012
+Batch 40000/107635 completed, running loss: 0.0012
+Batch 50000/107635 completed, running loss: 0.0013
+Batch 60000/107635 completed, running loss: 0.0012
+Batch 70000/107635 completed, running loss: 0.0013
+Batch 80000/107635 completed, running loss: 0.0012
+Batch 90000/107635 completed, running loss: 0.0013
+Batch 100000/107635 completed, running loss: 0.0014
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 18/50
+Train Loss: 0.0014, Train Acc: 0.9996
+Val Loss: 12.5842, Val Acc: 0.6111, ROC-AUC: 0.5959
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0013
+Batch 20000/107635 completed, running loss: 0.0012
+Batch 30000/107635 completed, running loss: 0.0014
+Batch 40000/107635 completed, running loss: 0.0012
+Batch 50000/107635 completed, running loss: 0.0012
+Batch 60000/107635 completed, running loss: 0.0013
+Batch 70000/107635 completed, running loss: 0.0013
+Batch 80000/107635 completed, running loss: 0.0013
+Batch 90000/107635 completed, running loss: 0.0013
+Batch 100000/107635 completed, running loss: 0.0013
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 19/50
+Train Loss: 0.0013, Train Acc: 0.9996
+Val Loss: 15.3331, Val Acc: 0.6078, ROC-AUC: 0.6022
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0012
+Batch 20000/107635 completed, running loss: 0.0013
+Batch 30000/107635 completed, running loss: 0.0015
+Batch 40000/107635 completed, running loss: 0.0015
+Batch 50000/107635 completed, running loss: 0.0016
+Batch 60000/107635 completed, running loss: 0.0016
+Batch 70000/107635 completed, running loss: 0.0015
+Batch 80000/107635 completed, running loss: 0.0015
+Batch 90000/107635 completed, running loss: 0.0015
+Batch 100000/107635 completed, running loss: 0.0015
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 20/50
+Train Loss: 0.0014, Train Acc: 0.9996
+Val Loss: 11.0724, Val Acc: 0.6407, ROC-AUC: 0.6460
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0012
+Batch 20000/107635 completed, running loss: 0.0014
+Batch 30000/107635 completed, running loss: 0.0013
+Batch 40000/107635 completed, running loss: 0.0012
+Batch 50000/107635 completed, running loss: 0.0014
+Batch 60000/107635 completed, running loss: 0.0014
+Batch 70000/107635 completed, running loss: 0.0014
+Batch 80000/107635 completed, running loss: 0.0014
+Batch 90000/107635 completed, running loss: 0.0014
+Batch 100000/107635 completed, running loss: 0.0015
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 21/50
+Train Loss: 0.0014, Train Acc: 0.9996
+Val Loss: 12.6945, Val Acc: 0.6276, ROC-AUC: 0.6402
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0013
+Batch 20000/107635 completed, running loss: 0.0011
+Batch 30000/107635 completed, running loss: 0.0013
+Batch 40000/107635 completed, running loss: 0.0012
+Batch 50000/107635 completed, running loss: 0.0012
+Batch 60000/107635 completed, running loss: 0.0011
+Batch 70000/107635 completed, running loss: 0.0013
+Batch 80000/107635 completed, running loss: 0.0014
+Batch 90000/107635 completed, running loss: 0.0013
+Batch 100000/107635 completed, running loss: 0.0014
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 22/50
+Train Loss: 0.0013, Train Acc: 0.9997
+Val Loss: 12.0200, Val Acc: 0.6439, ROC-AUC: 0.6520
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0014
+Batch 20000/107635 completed, running loss: 0.0015
+Batch 30000/107635 completed, running loss: 0.0014
+Batch 40000/107635 completed, running loss: 0.0013
+Batch 50000/107635 completed, running loss: 0.0013
+Batch 60000/107635 completed, running loss: 0.0013
+Batch 70000/107635 completed, running loss: 0.0013
+Batch 80000/107635 completed, running loss: 0.0013
+Batch 90000/107635 completed, running loss: 0.0013
+Batch 100000/107635 completed, running loss: 0.0014
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 23/50
+Train Loss: 0.0014, Train Acc: 0.9997
+Val Loss: 11.9014, Val Acc: 0.6024, ROC-AUC: 0.6072
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0005
+Batch 20000/107635 completed, running loss: 0.0008
+Batch 30000/107635 completed, running loss: 0.0008
+Batch 40000/107635 completed, running loss: 0.0008
+Batch 50000/107635 completed, running loss: 0.0009
+Batch 60000/107635 completed, running loss: 0.0009
+Batch 70000/107635 completed, running loss: 0.0010
+Batch 80000/107635 completed, running loss: 0.0009
+Batch 90000/107635 completed, running loss: 0.0011
+Batch 100000/107635 completed, running loss: 0.0011
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 24/50
+Train Loss: 0.0012, Train Acc: 0.9997
+Val Loss: 15.5756, Val Acc: 0.6020, ROC-AUC: 0.6011
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0013
+Batch 20000/107635 completed, running loss: 0.0011
+Batch 30000/107635 completed, running loss: 0.0010
+Batch 40000/107635 completed, running loss: 0.0008
+Batch 50000/107635 completed, running loss: 0.0007
+Batch 60000/107635 completed, running loss: 0.0007
+Batch 70000/107635 completed, running loss: 0.0007
+Batch 80000/107635 completed, running loss: 0.0007
+Batch 90000/107635 completed, running loss: 0.0006
+Batch 100000/107635 completed, running loss: 0.0007
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 25/50
+Train Loss: 0.0006, Train Acc: 0.9998
+Val Loss: 19.0014, Val Acc: 0.6194, ROC-AUC: 0.6258
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0006
+Batch 20000/107635 completed, running loss: 0.0005
+Batch 30000/107635 completed, running loss: 0.0005
+Batch 40000/107635 completed, running loss: 0.0005
+Batch 50000/107635 completed, running loss: 0.0005
+Batch 60000/107635 completed, running loss: 0.0005
+Batch 70000/107635 completed, running loss: 0.0004
+Batch 80000/107635 completed, running loss: 0.0005
+Batch 90000/107635 completed, running loss: 0.0004
+Batch 100000/107635 completed, running loss: 0.0004
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 26/50
+Train Loss: 0.0004, Train Acc: 0.9999
+Val Loss: 22.9795, Val Acc: 0.6039, ROC-AUC: 0.6066
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0002
+Batch 20000/107635 completed, running loss: 0.0003
+Batch 30000/107635 completed, running loss: 0.0003
+Batch 40000/107635 completed, running loss: 0.0004
+Batch 50000/107635 completed, running loss: 0.0004
+Batch 60000/107635 completed, running loss: 0.0004
+Batch 70000/107635 completed, running loss: 0.0004
+Batch 80000/107635 completed, running loss: 0.0004
+Batch 90000/107635 completed, running loss: 0.0004
+Batch 100000/107635 completed, running loss: 0.0004
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 27/50
+Train Loss: 0.0004, Train Acc: 0.9999
+Val Loss: 23.1575, Val Acc: 0.6230, ROC-AUC: 0.6256
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0002
+Batch 20000/107635 completed, running loss: 0.0002
+Batch 30000/107635 completed, running loss: 0.0002
+Batch 40000/107635 completed, running loss: 0.0002
+Batch 50000/107635 completed, running loss: 0.0003
+Batch 60000/107635 completed, running loss: 0.0003
+Batch 70000/107635 completed, running loss: 0.0003
+Batch 80000/107635 completed, running loss: 0.0003
+Batch 90000/107635 completed, running loss: 0.0003
+Batch 100000/107635 completed, running loss: 0.0003
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 28/50
+Train Loss: 0.0003, Train Acc: 0.9999
+Val Loss: 25.9585, Val Acc: 0.6154, ROC-AUC: 0.6230
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0002
+Batch 20000/107635 completed, running loss: 0.0004
+Batch 30000/107635 completed, running loss: 0.0004
+Batch 40000/107635 completed, running loss: 0.0004
+Batch 50000/107635 completed, running loss: 0.0003
+Batch 60000/107635 completed, running loss: 0.0003
+Batch 70000/107635 completed, running loss: 0.0003
+Batch 80000/107635 completed, running loss: 0.0003
+Batch 90000/107635 completed, running loss: 0.0003
+Batch 100000/107635 completed, running loss: 0.0003
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 29/50
+Train Loss: 0.0003, Train Acc: 0.9999
+Val Loss: 27.6609, Val Acc: 0.6070, ROC-AUC: 0.6131
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0001
+Batch 20000/107635 completed, running loss: 0.0001
+Batch 30000/107635 completed, running loss: 0.0001
+Batch 40000/107635 completed, running loss: 0.0002
+Batch 50000/107635 completed, running loss: 0.0002
+Batch 60000/107635 completed, running loss: 0.0002
+Batch 70000/107635 completed, running loss: 0.0002
+Batch 80000/107635 completed, running loss: 0.0002
+Batch 90000/107635 completed, running loss: 0.0002
+Batch 100000/107635 completed, running loss: 0.0002
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 30/50
+Train Loss: 0.0002, Train Acc: 1.0000
+Val Loss: 33.2290, Val Acc: 0.5907, ROC-AUC: 0.5933
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0000
+Batch 20000/107635 completed, running loss: 0.0004
+Batch 30000/107635 completed, running loss: 0.0003
+Batch 40000/107635 completed, running loss: 0.0003
+Batch 50000/107635 completed, running loss: 0.0004
+Batch 60000/107635 completed, running loss: 0.0004
+Batch 70000/107635 completed, running loss: 0.0004
+Batch 80000/107635 completed, running loss: 0.0004
+Batch 90000/107635 completed, running loss: 0.0004
+Batch 100000/107635 completed, running loss: 0.0003
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 31/50
+Train Loss: 0.0003, Train Acc: 0.9999
+Val Loss: 32.9773, Val Acc: 0.5877, ROC-AUC: 0.5881
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0003
+Batch 20000/107635 completed, running loss: 0.0004
+Batch 30000/107635 completed, running loss: 0.0003
+Batch 40000/107635 completed, running loss: 0.0002
+Batch 50000/107635 completed, running loss: 0.0002
+Batch 60000/107635 completed, running loss: 0.0002
+Batch 70000/107635 completed, running loss: 0.0002
+Batch 80000/107635 completed, running loss: 0.0002
+Batch 90000/107635 completed, running loss: 0.0002
+Batch 100000/107635 completed, running loss: 0.0002
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 32/50
+Train Loss: 0.0002, Train Acc: 1.0000
+Val Loss: 33.7173, Val Acc: 0.5988, ROC-AUC: 0.6036
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0002
+Batch 20000/107635 completed, running loss: 0.0001
+Batch 30000/107635 completed, running loss: 0.0001
+Batch 40000/107635 completed, running loss: 0.0001
+Batch 50000/107635 completed, running loss: 0.0001
+Batch 60000/107635 completed, running loss: 0.0002
+Batch 70000/107635 completed, running loss: 0.0002
+Batch 80000/107635 completed, running loss: 0.0002
+Batch 90000/107635 completed, running loss: 0.0003
+Batch 100000/107635 completed, running loss: 0.0003
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 33/50
+Train Loss: 0.0002, Train Acc: 1.0000
+Val Loss: 35.4510, Val Acc: 0.5918, ROC-AUC: 0.5999
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0000
+Batch 20000/107635 completed, running loss: 0.0002
+Batch 30000/107635 completed, running loss: 0.0002
+Batch 40000/107635 completed, running loss: 0.0002
+Batch 50000/107635 completed, running loss: 0.0002
+Batch 60000/107635 completed, running loss: 0.0002
+Batch 70000/107635 completed, running loss: 0.0001
+Batch 80000/107635 completed, running loss: 0.0002
+Batch 90000/107635 completed, running loss: 0.0002
+Batch 100000/107635 completed, running loss: 0.0002
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 34/50
+Train Loss: 0.0002, Train Acc: 1.0000
+Val Loss: 35.7302, Val Acc: 0.5965, ROC-AUC: 0.5997
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0002
+Batch 20000/107635 completed, running loss: 0.0002
+Batch 30000/107635 completed, running loss: 0.0002
+Batch 40000/107635 completed, running loss: 0.0002
+Batch 50000/107635 completed, running loss: 0.0002
+Batch 60000/107635 completed, running loss: 0.0002
+Batch 70000/107635 completed, running loss: 0.0003
+Batch 80000/107635 completed, running loss: 0.0004
+Batch 90000/107635 completed, running loss: 0.0006
+Batch 100000/107635 completed, running loss: 0.0005
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 35/50
+Train Loss: 0.0005, Train Acc: 0.9999
+Val Loss: 37.6680, Val Acc: 0.5808, ROC-AUC: 0.5824
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0003
+Batch 20000/107635 completed, running loss: 0.0003
+Batch 30000/107635 completed, running loss: 0.0003
+Batch 40000/107635 completed, running loss: 0.0003
+Batch 50000/107635 completed, running loss: 0.0003
+Batch 60000/107635 completed, running loss: 0.0003
+Batch 70000/107635 completed, running loss: 0.0002
+Batch 80000/107635 completed, running loss: 0.0003
+Batch 90000/107635 completed, running loss: 0.0003
+Batch 100000/107635 completed, running loss: 0.0003
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 36/50
+Train Loss: 0.0003, Train Acc: 0.9999
+Val Loss: 35.2288, Val Acc: 0.5839, ROC-AUC: 0.5884
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0002
+Batch 20000/107635 completed, running loss: 0.0003
+Batch 30000/107635 completed, running loss: 0.0002
+Batch 40000/107635 completed, running loss: 0.0003
+Batch 50000/107635 completed, running loss: 0.0002
+Batch 60000/107635 completed, running loss: 0.0002
+Batch 70000/107635 completed, running loss: 0.0003
+Batch 80000/107635 completed, running loss: 0.0002
+Batch 90000/107635 completed, running loss: 0.0002
+Batch 100000/107635 completed, running loss: 0.0002
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 37/50
+Train Loss: 0.0002, Train Acc: 1.0000
+Val Loss: 34.3794, Val Acc: 0.6083, ROC-AUC: 0.6198
+Starting training epoch with 107635 batches
+Batch 10000/107635 completed, running loss: 0.0004
+Batch 20000/107635 completed, running loss: 0.0002
+Batch 30000/107635 completed, running loss: 0.0001
+Batch 40000/107635 completed, running loss: 0.0002
+Batch 50000/107635 completed, running loss: 0.0002
+Batch 60000/107635 completed, running loss: 0.0002
+Batch 70000/107635 completed, running loss: 0.0002
+Batch 80000/107635 completed, running loss: 0.0002
+Batch 90000/107635 completed, running loss: 0.0002
+Batch 100000/107635 completed, running loss: 0.0003
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Fold 8 - Epoch 38/50
+Train Loss: 0.0002, Train Acc: 0.9999
+Val Loss: 33.9647, Val Acc: 0.6033, ROC-AUC: 0.6125
+Fold 8 - Early stopping triggered
+Starting evaluation with 107635 batches
+Evaluation batch 10000/107635 completed
+Evaluation batch 20000/107635 completed
+Evaluation batch 30000/107635 completed
+Evaluation batch 40000/107635 completed
+Evaluation batch 50000/107635 completed
+Evaluation batch 60000/107635 completed
+Evaluation batch 70000/107635 completed
+Evaluation batch 80000/107635 completed
+Evaluation batch 90000/107635 completed
+Evaluation batch 100000/107635 completed
+Starting evaluation with 18313 batches
+Evaluation batch 10000/18313 completed
+Starting evaluation with 9970 batches
+Fold 8 - Test Metrics:
+Loss: 3.2376
+Accuracy: 0.7065
+Precision: 0.5235
+Recall: 0.8693
+Roc_auc: 0.8049
+Specificity: 0.6304
+F1: 0.6534
+
+Starting Fold 9/10
+Fold 9 - Training label counts: {1: 228445, 0: 197075}
+Fold 9 - Validation label counts: {1: 39118, 0: 32390}
+Fold 9 - Test label counts: {0: 29463, 1: 17179}
+Preparing dataset with 425520 samples
+Extracting features
+Normalizing embeddings
+Dataset ready with 425520 samples
+Preparing dataset with 71508 samples
+Extracting features
+Normalizing embeddings
+Dataset ready with 71508 samples
+Preparing dataset with 46642 samples
+Extracting features
+Normalizing embeddings
+Dataset ready with 46642 samples
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0694
+Batch 20000/106380 completed, running loss: 0.0509
+Batch 30000/106380 completed, running loss: 0.0421
+Batch 40000/106380 completed, running loss: 0.0374
+Batch 50000/106380 completed, running loss: 0.0338
+Batch 60000/106380 completed, running loss: 0.0314
+Batch 70000/106380 completed, running loss: 0.0293
+Batch 80000/106380 completed, running loss: 0.0275
+Batch 90000/106380 completed, running loss: 0.0262
+Batch 100000/106380 completed, running loss: 0.0251
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 1/50
+Train Loss: 0.0244, Train Acc: 0.9910
+Val Loss: 3.4621, Val Acc: 0.5857, ROC-AUC: 0.5961
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0108
+Batch 20000/106380 completed, running loss: 0.0105
+Batch 30000/106380 completed, running loss: 0.0106
+Batch 40000/106380 completed, running loss: 0.0106
+Batch 50000/106380 completed, running loss: 0.0104
+Batch 60000/106380 completed, running loss: 0.0103
+Batch 70000/106380 completed, running loss: 0.0102
+Batch 80000/106380 completed, running loss: 0.0103
+Batch 90000/106380 completed, running loss: 0.0102
+Batch 100000/106380 completed, running loss: 0.0103
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 2/50
+Train Loss: 0.0102, Train Acc: 0.9964
+Val Loss: 4.9160, Val Acc: 0.5530, ROC-AUC: 0.5249
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0074
+Batch 20000/106380 completed, running loss: 0.0071
+Batch 30000/106380 completed, running loss: 0.0073
+Batch 40000/106380 completed, running loss: 0.0072
+Batch 50000/106380 completed, running loss: 0.0071
+Batch 60000/106380 completed, running loss: 0.0072
+Batch 70000/106380 completed, running loss: 0.0072
+Batch 80000/106380 completed, running loss: 0.0072
+Batch 90000/106380 completed, running loss: 0.0071
+Batch 100000/106380 completed, running loss: 0.0071
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 3/50
+Train Loss: 0.0071, Train Acc: 0.9975
+Val Loss: 4.3706, Val Acc: 0.5722, ROC-AUC: 0.5590
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0050
+Batch 20000/106380 completed, running loss: 0.0052
+Batch 30000/106380 completed, running loss: 0.0052
+Batch 40000/106380 completed, running loss: 0.0056
+Batch 50000/106380 completed, running loss: 0.0058
+Batch 60000/106380 completed, running loss: 0.0057
+Batch 70000/106380 completed, running loss: 0.0057
+Batch 80000/106380 completed, running loss: 0.0057
+Batch 90000/106380 completed, running loss: 0.0057
+Batch 100000/106380 completed, running loss: 0.0056
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 4/50
+Train Loss: 0.0056, Train Acc: 0.9980
+Val Loss: 5.4107, Val Acc: 0.5707, ROC-AUC: 0.5479
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0038
+Batch 20000/106380 completed, running loss: 0.0043
+Batch 30000/106380 completed, running loss: 0.0042
+Batch 40000/106380 completed, running loss: 0.0044
+Batch 50000/106380 completed, running loss: 0.0045
+Batch 60000/106380 completed, running loss: 0.0045
+Batch 70000/106380 completed, running loss: 0.0045
+Batch 80000/106380 completed, running loss: 0.0044
+Batch 90000/106380 completed, running loss: 0.0044
+Batch 100000/106380 completed, running loss: 0.0044
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 5/50
+Train Loss: 0.0044, Train Acc: 0.9984
+Val Loss: 7.7113, Val Acc: 0.5436, ROC-AUC: 0.5080
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0038
+Batch 20000/106380 completed, running loss: 0.0036
+Batch 30000/106380 completed, running loss: 0.0036
+Batch 40000/106380 completed, running loss: 0.0035
+Batch 50000/106380 completed, running loss: 0.0037
+Batch 60000/106380 completed, running loss: 0.0036
+Batch 70000/106380 completed, running loss: 0.0036
+Batch 80000/106380 completed, running loss: 0.0036
+Batch 90000/106380 completed, running loss: 0.0037
+Batch 100000/106380 completed, running loss: 0.0037
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 6/50
+Train Loss: 0.0037, Train Acc: 0.9987
+Val Loss: 8.0926, Val Acc: 0.5353, ROC-AUC: 0.5016
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0032
+Batch 20000/106380 completed, running loss: 0.0029
+Batch 30000/106380 completed, running loss: 0.0032
+Batch 40000/106380 completed, running loss: 0.0032
+Batch 50000/106380 completed, running loss: 0.0031
+Batch 60000/106380 completed, running loss: 0.0032
+Batch 70000/106380 completed, running loss: 0.0033
+Batch 80000/106380 completed, running loss: 0.0034
+Batch 90000/106380 completed, running loss: 0.0033
+Batch 100000/106380 completed, running loss: 0.0033
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 7/50
+Train Loss: 0.0033, Train Acc: 0.9989
+Val Loss: 8.5677, Val Acc: 0.5434, ROC-AUC: 0.5113
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0021
+Batch 20000/106380 completed, running loss: 0.0021
+Batch 30000/106380 completed, running loss: 0.0023
+Batch 40000/106380 completed, running loss: 0.0024
+Batch 50000/106380 completed, running loss: 0.0024
+Batch 60000/106380 completed, running loss: 0.0025
+Batch 70000/106380 completed, running loss: 0.0025
+Batch 80000/106380 completed, running loss: 0.0025
+Batch 90000/106380 completed, running loss: 0.0026
+Batch 100000/106380 completed, running loss: 0.0026
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 8/50
+Train Loss: 0.0026, Train Acc: 0.9992
+Val Loss: 10.6725, Val Acc: 0.5079, ROC-AUC: 0.4503
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0016
+Batch 20000/106380 completed, running loss: 0.0020
+Batch 30000/106380 completed, running loss: 0.0019
+Batch 40000/106380 completed, running loss: 0.0020
+Batch 50000/106380 completed, running loss: 0.0020
+Batch 60000/106380 completed, running loss: 0.0020
+Batch 70000/106380 completed, running loss: 0.0021
+Batch 80000/106380 completed, running loss: 0.0022
+Batch 90000/106380 completed, running loss: 0.0022
+Batch 100000/106380 completed, running loss: 0.0022
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 9/50
+Train Loss: 0.0022, Train Acc: 0.9992
+Val Loss: 11.5270, Val Acc: 0.5249, ROC-AUC: 0.4707
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0021
+Batch 20000/106380 completed, running loss: 0.0019
+Batch 30000/106380 completed, running loss: 0.0017
+Batch 40000/106380 completed, running loss: 0.0019
+Batch 50000/106380 completed, running loss: 0.0019
+Batch 60000/106380 completed, running loss: 0.0019
+Batch 70000/106380 completed, running loss: 0.0020
+Batch 80000/106380 completed, running loss: 0.0021
+Batch 90000/106380 completed, running loss: 0.0020
+Batch 100000/106380 completed, running loss: 0.0021
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 10/50
+Train Loss: 0.0021, Train Acc: 0.9993
+Val Loss: 11.5713, Val Acc: 0.5322, ROC-AUC: 0.4869
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0014
+Batch 20000/106380 completed, running loss: 0.0016
+Batch 30000/106380 completed, running loss: 0.0017
+Batch 40000/106380 completed, running loss: 0.0016
+Batch 50000/106380 completed, running loss: 0.0016
+Batch 60000/106380 completed, running loss: 0.0018
+Batch 70000/106380 completed, running loss: 0.0018
+Batch 80000/106380 completed, running loss: 0.0019
+Batch 90000/106380 completed, running loss: 0.0019
+Batch 100000/106380 completed, running loss: 0.0019
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 11/50
+Train Loss: 0.0019, Train Acc: 0.9995
+Val Loss: 12.2322, Val Acc: 0.5179, ROC-AUC: 0.4692
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0011
+Batch 20000/106380 completed, running loss: 0.0014
+Batch 30000/106380 completed, running loss: 0.0012
+Batch 40000/106380 completed, running loss: 0.0013
+Batch 50000/106380 completed, running loss: 0.0014
+Batch 60000/106380 completed, running loss: 0.0013
+Batch 70000/106380 completed, running loss: 0.0015
+Batch 80000/106380 completed, running loss: 0.0016
+Batch 90000/106380 completed, running loss: 0.0016
+Batch 100000/106380 completed, running loss: 0.0017
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 12/50
+Train Loss: 0.0018, Train Acc: 0.9995
+Val Loss: 11.0241, Val Acc: 0.5046, ROC-AUC: 0.4501
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0007
+Batch 20000/106380 completed, running loss: 0.0009
+Batch 30000/106380 completed, running loss: 0.0010
+Batch 40000/106380 completed, running loss: 0.0013
+Batch 50000/106380 completed, running loss: 0.0012
+Batch 60000/106380 completed, running loss: 0.0013
+Batch 70000/106380 completed, running loss: 0.0013
+Batch 80000/106380 completed, running loss: 0.0014
+Batch 90000/106380 completed, running loss: 0.0015
+Batch 100000/106380 completed, running loss: 0.0015
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 13/50
+Train Loss: 0.0016, Train Acc: 0.9996
+Val Loss: 12.9242, Val Acc: 0.5142, ROC-AUC: 0.4524
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0011
+Batch 20000/106380 completed, running loss: 0.0013
+Batch 30000/106380 completed, running loss: 0.0015
+Batch 40000/106380 completed, running loss: 0.0014
+Batch 50000/106380 completed, running loss: 0.0014
+Batch 60000/106380 completed, running loss: 0.0014
+Batch 70000/106380 completed, running loss: 0.0015
+Batch 80000/106380 completed, running loss: 0.0014
+Batch 90000/106380 completed, running loss: 0.0013
+Batch 100000/106380 completed, running loss: 0.0013
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 14/50
+Train Loss: 0.0013, Train Acc: 0.9996
+Val Loss: 16.0588, Val Acc: 0.5534, ROC-AUC: 0.5123
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0008
+Batch 20000/106380 completed, running loss: 0.0010
+Batch 30000/106380 completed, running loss: 0.0008
+Batch 40000/106380 completed, running loss: 0.0011
+Batch 50000/106380 completed, running loss: 0.0012
+Batch 60000/106380 completed, running loss: 0.0012
+Batch 70000/106380 completed, running loss: 0.0013
+Batch 80000/106380 completed, running loss: 0.0013
+Batch 90000/106380 completed, running loss: 0.0014
+Batch 100000/106380 completed, running loss: 0.0013
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 15/50
+Train Loss: 0.0014, Train Acc: 0.9996
+Val Loss: 13.4468, Val Acc: 0.5350, ROC-AUC: 0.4902
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0013
+Batch 20000/106380 completed, running loss: 0.0009
+Batch 30000/106380 completed, running loss: 0.0008
+Batch 40000/106380 completed, running loss: 0.0010
+Batch 50000/106380 completed, running loss: 0.0010
+Batch 60000/106380 completed, running loss: 0.0011
+Batch 70000/106380 completed, running loss: 0.0012
+Batch 80000/106380 completed, running loss: 0.0012
+Batch 90000/106380 completed, running loss: 0.0012
+Batch 100000/106380 completed, running loss: 0.0012
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 16/50
+Train Loss: 0.0012, Train Acc: 0.9996
+Val Loss: 13.9790, Val Acc: 0.5496, ROC-AUC: 0.5160
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0010
+Batch 20000/106380 completed, running loss: 0.0009
+Batch 30000/106380 completed, running loss: 0.0011
+Batch 40000/106380 completed, running loss: 0.0010
+Batch 50000/106380 completed, running loss: 0.0010
+Batch 60000/106380 completed, running loss: 0.0009
+Batch 70000/106380 completed, running loss: 0.0010
+Batch 80000/106380 completed, running loss: 0.0010
+Batch 90000/106380 completed, running loss: 0.0010
+Batch 100000/106380 completed, running loss: 0.0010
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 17/50
+Train Loss: 0.0010, Train Acc: 0.9997
+Val Loss: 17.0950, Val Acc: 0.5287, ROC-AUC: 0.4807
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0011
+Batch 20000/106380 completed, running loss: 0.0011
+Batch 30000/106380 completed, running loss: 0.0009
+Batch 40000/106380 completed, running loss: 0.0008
+Batch 50000/106380 completed, running loss: 0.0007
+Batch 60000/106380 completed, running loss: 0.0007
+Batch 70000/106380 completed, running loss: 0.0006
+Batch 80000/106380 completed, running loss: 0.0006
+Batch 90000/106380 completed, running loss: 0.0005
+Batch 100000/106380 completed, running loss: 0.0005
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 18/50
+Train Loss: 0.0005, Train Acc: 0.9998
+Val Loss: 23.5837, Val Acc: 0.5219, ROC-AUC: 0.4810
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0002
+Batch 20000/106380 completed, running loss: 0.0002
+Batch 30000/106380 completed, running loss: 0.0003
+Batch 40000/106380 completed, running loss: 0.0004
+Batch 50000/106380 completed, running loss: 0.0003
+Batch 60000/106380 completed, running loss: 0.0004
+Batch 70000/106380 completed, running loss: 0.0004
+Batch 80000/106380 completed, running loss: 0.0004
+Batch 90000/106380 completed, running loss: 0.0004
+Batch 100000/106380 completed, running loss: 0.0004
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 19/50
+Train Loss: 0.0004, Train Acc: 0.9999
+Val Loss: 24.7920, Val Acc: 0.5198, ROC-AUC: 0.4766
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0002
+Batch 20000/106380 completed, running loss: 0.0002
+Batch 30000/106380 completed, running loss: 0.0002
+Batch 40000/106380 completed, running loss: 0.0003
+Batch 50000/106380 completed, running loss: 0.0003
+Batch 60000/106380 completed, running loss: 0.0004
+Batch 70000/106380 completed, running loss: 0.0004
+Batch 80000/106380 completed, running loss: 0.0005
+Batch 90000/106380 completed, running loss: 0.0005
+Batch 100000/106380 completed, running loss: 0.0005
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 20/50
+Train Loss: 0.0005, Train Acc: 0.9999
+Val Loss: 28.0310, Val Acc: 0.5050, ROC-AUC: 0.4511
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0008
+Batch 20000/106380 completed, running loss: 0.0009
+Batch 30000/106380 completed, running loss: 0.0007
+Batch 40000/106380 completed, running loss: 0.0008
+Batch 50000/106380 completed, running loss: 0.0008
+Batch 60000/106380 completed, running loss: 0.0008
+Batch 70000/106380 completed, running loss: 0.0007
+Batch 80000/106380 completed, running loss: 0.0006
+Batch 90000/106380 completed, running loss: 0.0007
+Batch 100000/106380 completed, running loss: 0.0006
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 21/50
+Train Loss: 0.0006, Train Acc: 0.9999
+Val Loss: 30.4672, Val Acc: 0.5085, ROC-AUC: 0.4641
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0005
+Batch 20000/106380 completed, running loss: 0.0005
+Batch 30000/106380 completed, running loss: 0.0004
+Batch 40000/106380 completed, running loss: 0.0004
+Batch 50000/106380 completed, running loss: 0.0004
+Batch 60000/106380 completed, running loss: 0.0004
+Batch 70000/106380 completed, running loss: 0.0004
+Batch 80000/106380 completed, running loss: 0.0005
+Batch 90000/106380 completed, running loss: 0.0005
+Batch 100000/106380 completed, running loss: 0.0005
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 22/50
+Train Loss: 0.0005, Train Acc: 0.9999
+Val Loss: 30.3819, Val Acc: 0.5056, ROC-AUC: 0.4627
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0000
+Batch 20000/106380 completed, running loss: 0.0001
+Batch 30000/106380 completed, running loss: 0.0002
+Batch 40000/106380 completed, running loss: 0.0003
+Batch 50000/106380 completed, running loss: 0.0003
+Batch 60000/106380 completed, running loss: 0.0003
+Batch 70000/106380 completed, running loss: 0.0003
+Batch 80000/106380 completed, running loss: 0.0003
+Batch 90000/106380 completed, running loss: 0.0003
+Batch 100000/106380 completed, running loss: 0.0003
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 23/50
+Train Loss: 0.0004, Train Acc: 0.9999
+Val Loss: 34.7017, Val Acc: 0.5068, ROC-AUC: 0.4678
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0003
+Batch 20000/106380 completed, running loss: 0.0003
+Batch 30000/106380 completed, running loss: 0.0003
+Batch 40000/106380 completed, running loss: 0.0003
+Batch 50000/106380 completed, running loss: 0.0003
+Batch 60000/106380 completed, running loss: 0.0003
+Batch 70000/106380 completed, running loss: 0.0004
+Batch 80000/106380 completed, running loss: 0.0004
+Batch 90000/106380 completed, running loss: 0.0003
+Batch 100000/106380 completed, running loss: 0.0003
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 24/50
+Train Loss: 0.0004, Train Acc: 0.9999
+Val Loss: 41.0916, Val Acc: 0.5028, ROC-AUC: 0.4426
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0003
+Batch 20000/106380 completed, running loss: 0.0005
+Batch 30000/106380 completed, running loss: 0.0004
+Batch 40000/106380 completed, running loss: 0.0005
+Batch 50000/106380 completed, running loss: 0.0005
+Batch 60000/106380 completed, running loss: 0.0006
+Batch 70000/106380 completed, running loss: 0.0006
+Batch 80000/106380 completed, running loss: 0.0005
+Batch 90000/106380 completed, running loss: 0.0005
+Batch 100000/106380 completed, running loss: 0.0005
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 25/50
+Train Loss: 0.0005, Train Acc: 0.9999
+Val Loss: 37.6207, Val Acc: 0.5000, ROC-AUC: 0.4595
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0001
+Batch 20000/106380 completed, running loss: 0.0005
+Batch 30000/106380 completed, running loss: 0.0005
+Batch 40000/106380 completed, running loss: 0.0004
+Batch 50000/106380 completed, running loss: 0.0003
+Batch 60000/106380 completed, running loss: 0.0004
+Batch 70000/106380 completed, running loss: 0.0004
+Batch 80000/106380 completed, running loss: 0.0004
+Batch 90000/106380 completed, running loss: 0.0004
+Batch 100000/106380 completed, running loss: 0.0003
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 26/50
+Train Loss: 0.0003, Train Acc: 0.9999
+Val Loss: 43.9793, Val Acc: 0.4990, ROC-AUC: 0.4542
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0006
+Batch 20000/106380 completed, running loss: 0.0004
+Batch 30000/106380 completed, running loss: 0.0003
+Batch 40000/106380 completed, running loss: 0.0003
+Batch 50000/106380 completed, running loss: 0.0003
+Batch 60000/106380 completed, running loss: 0.0004
+Batch 70000/106380 completed, running loss: 0.0004
+Batch 80000/106380 completed, running loss: 0.0004
+Batch 90000/106380 completed, running loss: 0.0004
+Batch 100000/106380 completed, running loss: 0.0004
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 27/50
+Train Loss: 0.0004, Train Acc: 0.9999
+Val Loss: 48.9399, Val Acc: 0.5019, ROC-AUC: 0.4476
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0017
+Batch 20000/106380 completed, running loss: 0.0011
+Batch 30000/106380 completed, running loss: 0.0008
+Batch 40000/106380 completed, running loss: 0.0007
+Batch 50000/106380 completed, running loss: 0.0007
+Batch 60000/106380 completed, running loss: 0.0006
+Batch 70000/106380 completed, running loss: 0.0006
+Batch 80000/106380 completed, running loss: 0.0005
+Batch 90000/106380 completed, running loss: 0.0005
+Batch 100000/106380 completed, running loss: 0.0005
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 28/50
+Train Loss: 0.0005, Train Acc: 0.9999
+Val Loss: 44.6067, Val Acc: 0.4854, ROC-AUC: 0.4452
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0008
+Batch 20000/106380 completed, running loss: 0.0005
+Batch 30000/106380 completed, running loss: 0.0004
+Batch 40000/106380 completed, running loss: 0.0004
+Batch 50000/106380 completed, running loss: 0.0004
+Batch 60000/106380 completed, running loss: 0.0004
+Batch 70000/106380 completed, running loss: 0.0004
+Batch 80000/106380 completed, running loss: 0.0004
+Batch 90000/106380 completed, running loss: 0.0003
+Batch 100000/106380 completed, running loss: 0.0003
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 29/50
+Train Loss: 0.0004, Train Acc: 0.9999
+Val Loss: 42.1092, Val Acc: 0.5008, ROC-AUC: 0.4605
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0008
+Batch 20000/106380 completed, running loss: 0.0005
+Batch 30000/106380 completed, running loss: 0.0004
+Batch 40000/106380 completed, running loss: 0.0003
+Batch 50000/106380 completed, running loss: 0.0004
+Batch 60000/106380 completed, running loss: 0.0004
+Batch 70000/106380 completed, running loss: 0.0004
+Batch 80000/106380 completed, running loss: 0.0005
+Batch 90000/106380 completed, running loss: 0.0005
+Batch 100000/106380 completed, running loss: 0.0004
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 30/50
+Train Loss: 0.0004, Train Acc: 0.9999
+Val Loss: 43.5524, Val Acc: 0.4949, ROC-AUC: 0.4573
+Starting training epoch with 106380 batches
+Batch 10000/106380 completed, running loss: 0.0001
+Batch 20000/106380 completed, running loss: 0.0002
+Batch 30000/106380 completed, running loss: 0.0003
+Batch 40000/106380 completed, running loss: 0.0003
+Batch 50000/106380 completed, running loss: 0.0003
+Batch 60000/106380 completed, running loss: 0.0003
+Batch 70000/106380 completed, running loss: 0.0003
+Batch 80000/106380 completed, running loss: 0.0003
+Batch 90000/106380 completed, running loss: 0.0003
+Batch 100000/106380 completed, running loss: 0.0003
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Fold 9 - Epoch 31/50
+Train Loss: 0.0003, Train Acc: 0.9999
+Val Loss: 46.0357, Val Acc: 0.4954, ROC-AUC: 0.4549
+Fold 9 - Early stopping triggered
+Starting evaluation with 106380 batches
+Evaluation batch 10000/106380 completed
+Evaluation batch 20000/106380 completed
+Evaluation batch 30000/106380 completed
+Evaluation batch 40000/106380 completed
+Evaluation batch 50000/106380 completed
+Evaluation batch 60000/106380 completed
+Evaluation batch 70000/106380 completed
+Evaluation batch 80000/106380 completed
+Evaluation batch 90000/106380 completed
+Evaluation batch 100000/106380 completed
+Starting evaluation with 17877 batches
+Evaluation batch 10000/17877 completed
+Starting evaluation with 11661 batches
+Evaluation batch 10000/11661 completed
+Fold 9 - Test Metrics:
+Loss: 3.2901
+Accuracy: 0.5765
+Precision: 0.4530
+Recall: 0.7220
+Roc_auc: 0.6372
+Specificity: 0.4916
+F1: 0.5567
+
+Starting Fold 10/10
+Fold 10 - Training label counts: {1: 208132, 0: 190923}
+Fold 10 - Validation label counts: {1: 46444, 0: 30702}
+Fold 10 - Test label counts: {0: 37303, 1: 30166}
+Preparing dataset with 399055 samples
+Extracting features
+Normalizing embeddings
+Dataset ready with 399055 samples
+Preparing dataset with 77146 samples
+Extracting features
+Normalizing embeddings
+Dataset ready with 77146 samples
+Preparing dataset with 67469 samples
+Extracting features
+Normalizing embeddings
+Dataset ready with 67469 samples
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0620
+Batch 20000/99764 completed, running loss: 0.0445
+Batch 30000/99764 completed, running loss: 0.0367
+Batch 40000/99764 completed, running loss: 0.0320
+Batch 50000/99764 completed, running loss: 0.0290
+Batch 60000/99764 completed, running loss: 0.0267
+Batch 70000/99764 completed, running loss: 0.0251
+Batch 80000/99764 completed, running loss: 0.0237
+Batch 90000/99764 completed, running loss: 0.0223
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 1/50
+Train Loss: 0.0214, Train Acc: 0.9918
+Val Loss: 3.2862, Val Acc: 0.6149, ROC-AUC: 0.6349
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0100
+Batch 20000/99764 completed, running loss: 0.0102
+Batch 30000/99764 completed, running loss: 0.0103
+Batch 40000/99764 completed, running loss: 0.0101
+Batch 50000/99764 completed, running loss: 0.0100
+Batch 60000/99764 completed, running loss: 0.0097
+Batch 70000/99764 completed, running loss: 0.0096
+Batch 80000/99764 completed, running loss: 0.0095
+Batch 90000/99764 completed, running loss: 0.0093
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 2/50
+Train Loss: 0.0093, Train Acc: 0.9966
+Val Loss: 3.7755, Val Acc: 0.6280, ROC-AUC: 0.6356
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0062
+Batch 20000/99764 completed, running loss: 0.0065
+Batch 30000/99764 completed, running loss: 0.0062
+Batch 40000/99764 completed, running loss: 0.0063
+Batch 50000/99764 completed, running loss: 0.0063
+Batch 60000/99764 completed, running loss: 0.0063
+Batch 70000/99764 completed, running loss: 0.0063
+Batch 80000/99764 completed, running loss: 0.0062
+Batch 90000/99764 completed, running loss: 0.0064
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 3/50
+Train Loss: 0.0064, Train Acc: 0.9976
+Val Loss: 5.0235, Val Acc: 0.6032, ROC-AUC: 0.6052
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0050
+Batch 20000/99764 completed, running loss: 0.0050
+Batch 30000/99764 completed, running loss: 0.0049
+Batch 40000/99764 completed, running loss: 0.0051
+Batch 50000/99764 completed, running loss: 0.0051
+Batch 60000/99764 completed, running loss: 0.0052
+Batch 70000/99764 completed, running loss: 0.0052
+Batch 80000/99764 completed, running loss: 0.0052
+Batch 90000/99764 completed, running loss: 0.0051
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 4/50
+Train Loss: 0.0052, Train Acc: 0.9981
+Val Loss: 5.0461, Val Acc: 0.6341, ROC-AUC: 0.6488
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0034
+Batch 20000/99764 completed, running loss: 0.0036
+Batch 30000/99764 completed, running loss: 0.0042
+Batch 40000/99764 completed, running loss: 0.0042
+Batch 50000/99764 completed, running loss: 0.0041
+Batch 60000/99764 completed, running loss: 0.0042
+Batch 70000/99764 completed, running loss: 0.0043
+Batch 80000/99764 completed, running loss: 0.0044
+Batch 90000/99764 completed, running loss: 0.0043
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 5/50
+Train Loss: 0.0043, Train Acc: 0.9985
+Val Loss: 5.8152, Val Acc: 0.6065, ROC-AUC: 0.6382
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0032
+Batch 20000/99764 completed, running loss: 0.0033
+Batch 30000/99764 completed, running loss: 0.0034
+Batch 40000/99764 completed, running loss: 0.0033
+Batch 50000/99764 completed, running loss: 0.0034
+Batch 60000/99764 completed, running loss: 0.0035
+Batch 70000/99764 completed, running loss: 0.0034
+Batch 80000/99764 completed, running loss: 0.0035
+Batch 90000/99764 completed, running loss: 0.0035
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 6/50
+Train Loss: 0.0036, Train Acc: 0.9988
+Val Loss: 6.9027, Val Acc: 0.5969, ROC-AUC: 0.5964
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0030
+Batch 20000/99764 completed, running loss: 0.0028
+Batch 30000/99764 completed, running loss: 0.0030
+Batch 40000/99764 completed, running loss: 0.0030
+Batch 50000/99764 completed, running loss: 0.0029
+Batch 60000/99764 completed, running loss: 0.0029
+Batch 70000/99764 completed, running loss: 0.0030
+Batch 80000/99764 completed, running loss: 0.0030
+Batch 90000/99764 completed, running loss: 0.0030
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 7/50
+Train Loss: 0.0031, Train Acc: 0.9989
+Val Loss: 6.1853, Val Acc: 0.5871, ROC-AUC: 0.6180
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0021
+Batch 20000/99764 completed, running loss: 0.0022
+Batch 30000/99764 completed, running loss: 0.0022
+Batch 40000/99764 completed, running loss: 0.0024
+Batch 50000/99764 completed, running loss: 0.0024
+Batch 60000/99764 completed, running loss: 0.0026
+Batch 70000/99764 completed, running loss: 0.0025
+Batch 80000/99764 completed, running loss: 0.0026
+Batch 90000/99764 completed, running loss: 0.0027
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 8/50
+Train Loss: 0.0027, Train Acc: 0.9991
+Val Loss: 6.7092, Val Acc: 0.6205, ROC-AUC: 0.6353
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0017
+Batch 20000/99764 completed, running loss: 0.0022
+Batch 30000/99764 completed, running loss: 0.0021
+Batch 40000/99764 completed, running loss: 0.0021
+Batch 50000/99764 completed, running loss: 0.0022
+Batch 60000/99764 completed, running loss: 0.0023
+Batch 70000/99764 completed, running loss: 0.0023
+Batch 80000/99764 completed, running loss: 0.0023
+Batch 90000/99764 completed, running loss: 0.0023
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 9/50
+Train Loss: 0.0023, Train Acc: 0.9993
+Val Loss: 11.0268, Val Acc: 0.5480, ROC-AUC: 0.5767
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0023
+Batch 20000/99764 completed, running loss: 0.0022
+Batch 30000/99764 completed, running loss: 0.0020
+Batch 40000/99764 completed, running loss: 0.0022
+Batch 50000/99764 completed, running loss: 0.0022
+Batch 60000/99764 completed, running loss: 0.0023
+Batch 70000/99764 completed, running loss: 0.0023
+Batch 80000/99764 completed, running loss: 0.0024
+Batch 90000/99764 completed, running loss: 0.0023
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 10/50
+Train Loss: 0.0023, Train Acc: 0.9992
+Val Loss: 11.1935, Val Acc: 0.5700, ROC-AUC: 0.5792
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0018
+Batch 20000/99764 completed, running loss: 0.0016
+Batch 30000/99764 completed, running loss: 0.0018
+Batch 40000/99764 completed, running loss: 0.0017
+Batch 50000/99764 completed, running loss: 0.0018
+Batch 60000/99764 completed, running loss: 0.0017
+Batch 70000/99764 completed, running loss: 0.0018
+Batch 80000/99764 completed, running loss: 0.0018
+Batch 90000/99764 completed, running loss: 0.0017
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 11/50
+Train Loss: 0.0018, Train Acc: 0.9994
+Val Loss: 10.0288, Val Acc: 0.5623, ROC-AUC: 0.5948
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0017
+Batch 20000/99764 completed, running loss: 0.0017
+Batch 30000/99764 completed, running loss: 0.0018
+Batch 40000/99764 completed, running loss: 0.0018
+Batch 50000/99764 completed, running loss: 0.0020
+Batch 60000/99764 completed, running loss: 0.0020
+Batch 70000/99764 completed, running loss: 0.0019
+Batch 80000/99764 completed, running loss: 0.0018
+Batch 90000/99764 completed, running loss: 0.0018
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 12/50
+Train Loss: 0.0018, Train Acc: 0.9994
+Val Loss: 11.4286, Val Acc: 0.6052, ROC-AUC: 0.6282
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0016
+Batch 20000/99764 completed, running loss: 0.0015
+Batch 30000/99764 completed, running loss: 0.0016
+Batch 40000/99764 completed, running loss: 0.0015
+Batch 50000/99764 completed, running loss: 0.0015
+Batch 60000/99764 completed, running loss: 0.0015
+Batch 70000/99764 completed, running loss: 0.0015
+Batch 80000/99764 completed, running loss: 0.0015
+Batch 90000/99764 completed, running loss: 0.0015
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 13/50
+Train Loss: 0.0015, Train Acc: 0.9996
+Val Loss: 10.8039, Val Acc: 0.6370, ROC-AUC: 0.6724
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0017
+Batch 20000/99764 completed, running loss: 0.0017
+Batch 30000/99764 completed, running loss: 0.0017
+Batch 40000/99764 completed, running loss: 0.0016
+Batch 50000/99764 completed, running loss: 0.0016
+Batch 60000/99764 completed, running loss: 0.0016
+Batch 70000/99764 completed, running loss: 0.0016
+Batch 80000/99764 completed, running loss: 0.0017
+Batch 90000/99764 completed, running loss: 0.0017
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 14/50
+Train Loss: 0.0017, Train Acc: 0.9995
+Val Loss: 10.1130, Val Acc: 0.6384, ROC-AUC: 0.6585
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0009
+Batch 20000/99764 completed, running loss: 0.0010
+Batch 30000/99764 completed, running loss: 0.0010
+Batch 40000/99764 completed, running loss: 0.0010
+Batch 50000/99764 completed, running loss: 0.0010
+Batch 60000/99764 completed, running loss: 0.0010
+Batch 70000/99764 completed, running loss: 0.0011
+Batch 80000/99764 completed, running loss: 0.0011
+Batch 90000/99764 completed, running loss: 0.0011
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 15/50
+Train Loss: 0.0011, Train Acc: 0.9996
+Val Loss: 12.5397, Val Acc: 0.6155, ROC-AUC: 0.6419
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0004
+Batch 20000/99764 completed, running loss: 0.0010
+Batch 30000/99764 completed, running loss: 0.0011
+Batch 40000/99764 completed, running loss: 0.0012
+Batch 50000/99764 completed, running loss: 0.0011
+Batch 60000/99764 completed, running loss: 0.0011
+Batch 70000/99764 completed, running loss: 0.0011
+Batch 80000/99764 completed, running loss: 0.0012
+Batch 90000/99764 completed, running loss: 0.0012
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 16/50
+Train Loss: 0.0012, Train Acc: 0.9996
+Val Loss: 13.2287, Val Acc: 0.6146, ROC-AUC: 0.6338
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0013
+Batch 20000/99764 completed, running loss: 0.0011
+Batch 30000/99764 completed, running loss: 0.0012
+Batch 40000/99764 completed, running loss: 0.0012
+Batch 50000/99764 completed, running loss: 0.0012
+Batch 60000/99764 completed, running loss: 0.0012
+Batch 70000/99764 completed, running loss: 0.0013
+Batch 80000/99764 completed, running loss: 0.0014
+Batch 90000/99764 completed, running loss: 0.0013
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 17/50
+Train Loss: 0.0014, Train Acc: 0.9997
+Val Loss: 9.7855, Val Acc: 0.6587, ROC-AUC: 0.6691
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0008
+Batch 20000/99764 completed, running loss: 0.0013
+Batch 30000/99764 completed, running loss: 0.0012
+Batch 40000/99764 completed, running loss: 0.0011
+Batch 50000/99764 completed, running loss: 0.0011
+Batch 60000/99764 completed, running loss: 0.0011
+Batch 70000/99764 completed, running loss: 0.0011
+Batch 80000/99764 completed, running loss: 0.0011
+Batch 90000/99764 completed, running loss: 0.0012
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 18/50
+Train Loss: 0.0011, Train Acc: 0.9997
+Val Loss: 13.8628, Val Acc: 0.6280, ROC-AUC: 0.6346
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0009
+Batch 20000/99764 completed, running loss: 0.0009
+Batch 30000/99764 completed, running loss: 0.0010
+Batch 40000/99764 completed, running loss: 0.0011
+Batch 50000/99764 completed, running loss: 0.0011
+Batch 60000/99764 completed, running loss: 0.0010
+Batch 70000/99764 completed, running loss: 0.0011
+Batch 80000/99764 completed, running loss: 0.0010
+Batch 90000/99764 completed, running loss: 0.0010
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 19/50
+Train Loss: 0.0010, Train Acc: 0.9997
+Val Loss: 19.7959, Val Acc: 0.5956, ROC-AUC: 0.6059
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0013
+Batch 20000/99764 completed, running loss: 0.0009
+Batch 30000/99764 completed, running loss: 0.0011
+Batch 40000/99764 completed, running loss: 0.0011
+Batch 50000/99764 completed, running loss: 0.0011
+Batch 60000/99764 completed, running loss: 0.0010
+Batch 70000/99764 completed, running loss: 0.0010
+Batch 80000/99764 completed, running loss: 0.0011
+Batch 90000/99764 completed, running loss: 0.0010
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 20/50
+Train Loss: 0.0011, Train Acc: 0.9997
+Val Loss: 12.7830, Val Acc: 0.6215, ROC-AUC: 0.6368
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0005
+Batch 20000/99764 completed, running loss: 0.0006
+Batch 30000/99764 completed, running loss: 0.0008
+Batch 40000/99764 completed, running loss: 0.0009
+Batch 50000/99764 completed, running loss: 0.0009
+Batch 60000/99764 completed, running loss: 0.0009
+Batch 70000/99764 completed, running loss: 0.0010
+Batch 80000/99764 completed, running loss: 0.0010
+Batch 90000/99764 completed, running loss: 0.0010
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 21/50
+Train Loss: 0.0010, Train Acc: 0.9997
+Val Loss: 14.7581, Val Acc: 0.6038, ROC-AUC: 0.6272
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0008
+Batch 20000/99764 completed, running loss: 0.0008
+Batch 30000/99764 completed, running loss: 0.0008
+Batch 40000/99764 completed, running loss: 0.0008
+Batch 50000/99764 completed, running loss: 0.0009
+Batch 60000/99764 completed, running loss: 0.0011
+Batch 70000/99764 completed, running loss: 0.0011
+Batch 80000/99764 completed, running loss: 0.0010
+Batch 90000/99764 completed, running loss: 0.0010
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 22/50
+Train Loss: 0.0010, Train Acc: 0.9998
+Val Loss: 15.8733, Val Acc: 0.6292, ROC-AUC: 0.6262
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0013
+Batch 20000/99764 completed, running loss: 0.0011
+Batch 30000/99764 completed, running loss: 0.0010
+Batch 40000/99764 completed, running loss: 0.0011
+Batch 50000/99764 completed, running loss: 0.0010
+Batch 60000/99764 completed, running loss: 0.0010
+Batch 70000/99764 completed, running loss: 0.0010
+Batch 80000/99764 completed, running loss: 0.0010
+Batch 90000/99764 completed, running loss: 0.0010
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 23/50
+Train Loss: 0.0010, Train Acc: 0.9998
+Val Loss: 20.3214, Val Acc: 0.5566, ROC-AUC: 0.5876
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0009
+Batch 20000/99764 completed, running loss: 0.0009
+Batch 30000/99764 completed, running loss: 0.0011
+Batch 40000/99764 completed, running loss: 0.0011
+Batch 50000/99764 completed, running loss: 0.0011
+Batch 60000/99764 completed, running loss: 0.0010
+Batch 70000/99764 completed, running loss: 0.0010
+Batch 80000/99764 completed, running loss: 0.0009
+Batch 90000/99764 completed, running loss: 0.0009
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 24/50
+Train Loss: 0.0009, Train Acc: 0.9998
+Val Loss: 20.8419, Val Acc: 0.5711, ROC-AUC: 0.5970
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0011
+Batch 20000/99764 completed, running loss: 0.0007
+Batch 30000/99764 completed, running loss: 0.0013
+Batch 40000/99764 completed, running loss: 0.0012
+Batch 50000/99764 completed, running loss: 0.0011
+Batch 60000/99764 completed, running loss: 0.0011
+Batch 70000/99764 completed, running loss: 0.0010
+Batch 80000/99764 completed, running loss: 0.0010
+Batch 90000/99764 completed, running loss: 0.0010
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 25/50
+Train Loss: 0.0009, Train Acc: 0.9998
+Val Loss: 20.1411, Val Acc: 0.6211, ROC-AUC: 0.6227
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0007
+Batch 20000/99764 completed, running loss: 0.0006
+Batch 30000/99764 completed, running loss: 0.0007
+Batch 40000/99764 completed, running loss: 0.0008
+Batch 50000/99764 completed, running loss: 0.0008
+Batch 60000/99764 completed, running loss: 0.0008
+Batch 70000/99764 completed, running loss: 0.0008
+Batch 80000/99764 completed, running loss: 0.0008
+Batch 90000/99764 completed, running loss: 0.0008
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 26/50
+Train Loss: 0.0008, Train Acc: 0.9998
+Val Loss: 20.2951, Val Acc: 0.5977, ROC-AUC: 0.6170
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0011
+Batch 20000/99764 completed, running loss: 0.0012
+Batch 30000/99764 completed, running loss: 0.0010
+Batch 40000/99764 completed, running loss: 0.0010
+Batch 50000/99764 completed, running loss: 0.0009
+Batch 60000/99764 completed, running loss: 0.0008
+Batch 70000/99764 completed, running loss: 0.0008
+Batch 80000/99764 completed, running loss: 0.0008
+Batch 90000/99764 completed, running loss: 0.0008
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 27/50
+Train Loss: 0.0009, Train Acc: 0.9998
+Val Loss: 19.0510, Val Acc: 0.5940, ROC-AUC: 0.6046
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0006
+Batch 20000/99764 completed, running loss: 0.0007
+Batch 30000/99764 completed, running loss: 0.0007
+Batch 40000/99764 completed, running loss: 0.0009
+Batch 50000/99764 completed, running loss: 0.0008
+Batch 60000/99764 completed, running loss: 0.0009
+Batch 70000/99764 completed, running loss: 0.0008
+Batch 80000/99764 completed, running loss: 0.0008
+Batch 90000/99764 completed, running loss: 0.0008
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 28/50
+Train Loss: 0.0009, Train Acc: 0.9998
+Val Loss: 23.1923, Val Acc: 0.5785, ROC-AUC: 0.5969
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0004
+Batch 20000/99764 completed, running loss: 0.0005
+Batch 30000/99764 completed, running loss: 0.0006
+Batch 40000/99764 completed, running loss: 0.0006
+Batch 50000/99764 completed, running loss: 0.0007
+Batch 60000/99764 completed, running loss: 0.0006
+Batch 70000/99764 completed, running loss: 0.0006
+Batch 80000/99764 completed, running loss: 0.0006
+Batch 90000/99764 completed, running loss: 0.0007
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 29/50
+Train Loss: 0.0007, Train Acc: 0.9999
+Val Loss: 21.4511, Val Acc: 0.6201, ROC-AUC: 0.6287
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0009
+Batch 20000/99764 completed, running loss: 0.0007
+Batch 30000/99764 completed, running loss: 0.0007
+Batch 40000/99764 completed, running loss: 0.0006
+Batch 50000/99764 completed, running loss: 0.0006
+Batch 60000/99764 completed, running loss: 0.0005
+Batch 70000/99764 completed, running loss: 0.0005
+Batch 80000/99764 completed, running loss: 0.0004
+Batch 90000/99764 completed, running loss: 0.0004
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 30/50
+Train Loss: 0.0004, Train Acc: 0.9999
+Val Loss: 26.9316, Val Acc: 0.5679, ROC-AUC: 0.5895
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0002
+Batch 20000/99764 completed, running loss: 0.0002
+Batch 30000/99764 completed, running loss: 0.0001
+Batch 40000/99764 completed, running loss: 0.0001
+Batch 50000/99764 completed, running loss: 0.0002
+Batch 60000/99764 completed, running loss: 0.0002
+Batch 70000/99764 completed, running loss: 0.0002
+Batch 80000/99764 completed, running loss: 0.0002
+Batch 90000/99764 completed, running loss: 0.0002
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 31/50
+Train Loss: 0.0002, Train Acc: 0.9999
+Val Loss: 32.4419, Val Acc: 0.5588, ROC-AUC: 0.5786
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0000
+Batch 20000/99764 completed, running loss: 0.0000
+Batch 30000/99764 completed, running loss: 0.0002
+Batch 40000/99764 completed, running loss: 0.0002
+Batch 50000/99764 completed, running loss: 0.0002
+Batch 60000/99764 completed, running loss: 0.0002
+Batch 70000/99764 completed, running loss: 0.0002
+Batch 80000/99764 completed, running loss: 0.0002
+Batch 90000/99764 completed, running loss: 0.0002
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 32/50
+Train Loss: 0.0002, Train Acc: 1.0000
+Val Loss: 27.5375, Val Acc: 0.5934, ROC-AUC: 0.6099
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0000
+Batch 20000/99764 completed, running loss: 0.0003
+Batch 30000/99764 completed, running loss: 0.0005
+Batch 40000/99764 completed, running loss: 0.0004
+Batch 50000/99764 completed, running loss: 0.0004
+Batch 60000/99764 completed, running loss: 0.0003
+Batch 70000/99764 completed, running loss: 0.0003
+Batch 80000/99764 completed, running loss: 0.0003
+Batch 90000/99764 completed, running loss: 0.0003
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 33/50
+Train Loss: 0.0002, Train Acc: 1.0000
+Val Loss: 30.7582, Val Acc: 0.5955, ROC-AUC: 0.6143
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0001
+Batch 20000/99764 completed, running loss: 0.0001
+Batch 30000/99764 completed, running loss: 0.0001
+Batch 40000/99764 completed, running loss: 0.0001
+Batch 50000/99764 completed, running loss: 0.0001
+Batch 60000/99764 completed, running loss: 0.0001
+Batch 70000/99764 completed, running loss: 0.0001
+Batch 80000/99764 completed, running loss: 0.0001
+Batch 90000/99764 completed, running loss: 0.0002
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 34/50
+Train Loss: 0.0002, Train Acc: 1.0000
+Val Loss: 28.3235, Val Acc: 0.6171, ROC-AUC: 0.6270
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0000
+Batch 20000/99764 completed, running loss: 0.0000
+Batch 30000/99764 completed, running loss: 0.0002
+Batch 40000/99764 completed, running loss: 0.0002
+Batch 50000/99764 completed, running loss: 0.0003
+Batch 60000/99764 completed, running loss: 0.0002
+Batch 70000/99764 completed, running loss: 0.0002
+Batch 80000/99764 completed, running loss: 0.0003
+Batch 90000/99764 completed, running loss: 0.0002
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 35/50
+Train Loss: 0.0003, Train Acc: 1.0000
+Val Loss: 32.6658, Val Acc: 0.5977, ROC-AUC: 0.6177
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0000
+Batch 20000/99764 completed, running loss: 0.0000
+Batch 30000/99764 completed, running loss: 0.0000
+Batch 40000/99764 completed, running loss: 0.0000
+Batch 50000/99764 completed, running loss: 0.0000
+Batch 60000/99764 completed, running loss: 0.0000
+Batch 70000/99764 completed, running loss: 0.0001
+Batch 80000/99764 completed, running loss: 0.0001
+Batch 90000/99764 completed, running loss: 0.0001
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 36/50
+Train Loss: 0.0001, Train Acc: 1.0000
+Val Loss: 35.7287, Val Acc: 0.5830, ROC-AUC: 0.6070
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0001
+Batch 20000/99764 completed, running loss: 0.0001
+Batch 30000/99764 completed, running loss: 0.0000
+Batch 40000/99764 completed, running loss: 0.0005
+Batch 50000/99764 completed, running loss: 0.0004
+Batch 60000/99764 completed, running loss: 0.0004
+Batch 70000/99764 completed, running loss: 0.0003
+Batch 80000/99764 completed, running loss: 0.0003
+Batch 90000/99764 completed, running loss: 0.0003
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 37/50
+Train Loss: 0.0003, Train Acc: 1.0000
+Val Loss: 34.5308, Val Acc: 0.6118, ROC-AUC: 0.6337
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0000
+Batch 20000/99764 completed, running loss: 0.0000
+Batch 30000/99764 completed, running loss: 0.0000
+Batch 40000/99764 completed, running loss: 0.0000
+Batch 50000/99764 completed, running loss: 0.0000
+Batch 60000/99764 completed, running loss: 0.0000
+Batch 70000/99764 completed, running loss: 0.0000
+Batch 80000/99764 completed, running loss: 0.0001
+Batch 90000/99764 completed, running loss: 0.0000
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 38/50
+Train Loss: 0.0001, Train Acc: 1.0000
+Val Loss: 36.6075, Val Acc: 0.6110, ROC-AUC: 0.6275
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0003
+Batch 20000/99764 completed, running loss: 0.0002
+Batch 30000/99764 completed, running loss: 0.0001
+Batch 40000/99764 completed, running loss: 0.0001
+Batch 50000/99764 completed, running loss: 0.0001
+Batch 60000/99764 completed, running loss: 0.0001
+Batch 70000/99764 completed, running loss: 0.0001
+Batch 80000/99764 completed, running loss: 0.0001
+Batch 90000/99764 completed, running loss: 0.0001
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 39/50
+Train Loss: 0.0001, Train Acc: 1.0000
+Val Loss: 40.2647, Val Acc: 0.6070, ROC-AUC: 0.6292
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0000
+Batch 20000/99764 completed, running loss: 0.0000
+Batch 30000/99764 completed, running loss: 0.0001
+Batch 40000/99764 completed, running loss: 0.0001
+Batch 50000/99764 completed, running loss: 0.0001
+Batch 60000/99764 completed, running loss: 0.0001
+Batch 70000/99764 completed, running loss: 0.0001
+Batch 80000/99764 completed, running loss: 0.0001
+Batch 90000/99764 completed, running loss: 0.0001
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 40/50
+Train Loss: 0.0001, Train Acc: 1.0000
+Val Loss: 40.9119, Val Acc: 0.6068, ROC-AUC: 0.6310
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0001
+Batch 20000/99764 completed, running loss: 0.0000
+Batch 30000/99764 completed, running loss: 0.0004
+Batch 40000/99764 completed, running loss: 0.0003
+Batch 50000/99764 completed, running loss: 0.0003
+Batch 60000/99764 completed, running loss: 0.0002
+Batch 70000/99764 completed, running loss: 0.0003
+Batch 80000/99764 completed, running loss: 0.0003
+Batch 90000/99764 completed, running loss: 0.0003
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 41/50
+Train Loss: 0.0003, Train Acc: 1.0000
+Val Loss: 40.4435, Val Acc: 0.5968, ROC-AUC: 0.6246
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0000
+Batch 20000/99764 completed, running loss: 0.0000
+Batch 30000/99764 completed, running loss: 0.0000
+Batch 40000/99764 completed, running loss: 0.0000
+Batch 50000/99764 completed, running loss: 0.0000
+Batch 60000/99764 completed, running loss: 0.0000
+Batch 70000/99764 completed, running loss: 0.0000
+Batch 80000/99764 completed, running loss: 0.0000
+Batch 90000/99764 completed, running loss: 0.0001
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 42/50
+Train Loss: 0.0001, Train Acc: 1.0000
+Val Loss: 46.0724, Val Acc: 0.5861, ROC-AUC: 0.6090
+Starting training epoch with 99764 batches
+Batch 10000/99764 completed, running loss: 0.0000
+Batch 20000/99764 completed, running loss: 0.0000
+Batch 30000/99764 completed, running loss: 0.0000
+Batch 40000/99764 completed, running loss: 0.0000
+Batch 50000/99764 completed, running loss: 0.0000
+Batch 60000/99764 completed, running loss: 0.0000
+Batch 70000/99764 completed, running loss: 0.0000
+Batch 80000/99764 completed, running loss: 0.0000
+Batch 90000/99764 completed, running loss: 0.0000
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Fold 10 - Epoch 43/50
+Train Loss: 0.0000, Train Acc: 1.0000
+Val Loss: 45.8198, Val Acc: 0.5791, ROC-AUC: 0.6007
+Fold 10 - Early stopping triggered
+Starting evaluation with 99764 batches
+Evaluation batch 10000/99764 completed
+Evaluation batch 20000/99764 completed
+Evaluation batch 30000/99764 completed
+Evaluation batch 40000/99764 completed
+Evaluation batch 50000/99764 completed
+Evaluation batch 60000/99764 completed
+Evaluation batch 70000/99764 completed
+Evaluation batch 80000/99764 completed
+Evaluation batch 90000/99764 completed
+Starting evaluation with 19287 batches
+Evaluation batch 10000/19287 completed
+Starting evaluation with 16868 batches
+Evaluation batch 10000/16868 completed
+Fold 10 - Test Metrics:
+Loss: 12.7963
+Accuracy: 0.4301
+Precision: 0.3962
+Recall: 0.5243
+Roc_auc: 0.4123
+Specificity: 0.3539
+F1: 0.4514
+
+10-Fold Cross-Validation Results (Train Set):
+Average Metrics:
+Loss: 0.0055 (0.0028, 0.0081)
+Accuracy: 0.9980 (0.9970, 0.9990)
+Precision: 0.9977 (0.9965, 0.9990)
+Recall: 0.9983 (0.9973, 0.9993)
+Roc_auc: 1.0000 (1.0000, 1.0000)
+Specificity: 0.9976 (0.9963, 0.9989)
+F1: 0.9980 (0.9970, 0.9990)
