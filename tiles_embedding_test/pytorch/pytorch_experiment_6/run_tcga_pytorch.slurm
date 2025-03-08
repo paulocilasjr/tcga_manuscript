@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=pytorch_exp                # Job name
-#SBATCH --output=%j.out                 # Output file with job ID
-#SBATCH --error=%j.err                  # Error file with job ID
+#SBATCH --job-name=exp_4                # Job name
+#SBATCH --output=%j.out  # Output file with job ID
+#SBATCH --error=%j.err   # Error file with job ID
 #SBATCH --ntasks=1                      # Number of tasks
 #SBATCH --cpus-per-task=10              # Number of CPU cores
 #SBATCH --mem=1000G                     # Memory allocation
@@ -10,9 +10,6 @@
 
 # Dataset path
 DATASET_PATH="./../../../../trident/TCGA_BRCA/convert_h5_to_csv/csv_files/tcga_patches_with_labels.csv"
-
-# Python file to run
-PYTHON_FILE="pytorch_test_xvalidation.py"
 
 # Random seed
 SEED=42
@@ -33,13 +30,13 @@ conda activate pytorch_env || {
 export LD_LIBRARY_PATH=${CONDA_PREFIX}/lib:${LD_LIBRARY_PATH}
 
 # Verify Python script exists
-if [ ! -f "${PYTHON_FILE}" ]; then
-    echo "Error: ${PYTHON_FILE} not found in current directory"
+if [ ! -f "pytorch_test.py" ]; then
+    echo "Error: pytorch_test.py not found in current directory"
     exit 1
 fi
 
 # Run the Python script
-python "${PYTHON_FILE}" \
+python pytorch_test.py \
     --dataset "${DATASET_PATH}" \
     --seed ${SEED}
 

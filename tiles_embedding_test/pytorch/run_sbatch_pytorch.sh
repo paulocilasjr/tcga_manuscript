@@ -3,15 +3,16 @@
 # create_slurm.sh
 
 # Check if required arguments are provided
-if [ $# -lt 1 ]; then
-    echo "Usage: $0 <dataset_path> [seed]"
-    echo "Example: $0 /path/to/tcga_patches_ludwig.csv 42"
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <dataset_path> <python_file> [seed]"
+    echo "Example: $0 /path/to/tcga_patches_ludwig.csv pytorch_test.py 42"
     exit 1
 fi
 
 # Assign arguments
 DATASET_PATH="$1"
-SEED="${2:-42}"  # Default seed is 42 if not provided
+PYTHON_FILE="$2"
+SEED="${3:-42}"  # Default seed is 42 if not provided
 
 # SLURM job file name
 SLURM_FILE="run_tcga_pytorch.slurm"
@@ -19,9 +20,9 @@ SLURM_FILE="run_tcga_pytorch.slurm"
 # Create the SLURM file with embedded arguments
 cat > "${SLURM_FILE}" << EOL
 #!/bin/bash
-#SBATCH --job-name=exp_4                # Job name
-#SBATCH --output=%j.out  # Output file with job ID
-#SBATCH --error=%j.err   # Error file with job ID
+#SBATCH --job-name=pytorch_exp                # Job name
+#SBATCH --output=%j.out                 # Output file with job ID
+#SBATCH --error=%j.err                  # Error file with job ID
 #SBATCH --ntasks=1                      # Number of tasks
 #SBATCH --cpus-per-task=10              # Number of CPU cores
 #SBATCH --mem=1000G                     # Memory allocation
@@ -30,6 +31,9 @@ cat > "${SLURM_FILE}" << EOL
 
 # Dataset path
 DATASET_PATH="${DATASET_PATH}"
+
+# Python file to run
+PYTHON_FILE="${PYTHON_FILE}"
 
 # Random seed
 SEED=${SEED}
@@ -50,13 +54,13 @@ conda activate pytorch_env || {
 export LD_LIBRARY_PATH=\${CONDA_PREFIX}/lib:\${LD_LIBRARY_PATH}
 
 # Verify Python script exists
-if [ ! -f "pytorch_test.py" ]; then
-    echo "Error: pytorch_test.py not found in current directory"
+if [ ! -f "\${PYTHON_FILE}" ]; then
+    echo "Error: \${PYTHON_FILE} not found in current directory"
     exit 1
 fi
 
 # Run the Python script
-python pytorch_test.py \\
+python "\${PYTHON_FILE}" \\
     --dataset "\${DATASET_PATH}" \\
     --seed \${SEED}
 
@@ -70,4 +74,4 @@ chmod +x "${SLURM_FILE}"
 # Submit the SLURM job
 sbatch "${SLURM_FILE}"
 
-echo "Submitted SLURM job with dataset: ${DATASET_PATH} and seed: ${SEED}"
+echo "Submitted SLURM job with dataset: ${DATASET_PATH}, python file: ${PYTHON_FILE}, and seed: ${SEED}"
