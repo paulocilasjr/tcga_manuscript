@@ -1,0 +1,45 @@
+preprocessing:
+    sample_ratio: 1.0  # Use the full dataset (100% of the data)
+    sample_size: null  # No size limitation on samples
+    oversample_minority: null  # Do not apply oversampling to minority class
+    undersample_majority: null  # Do not apply undersampling to majority class
+    split:
+        type: hash 
+        column: sample_name
+        probabilities:
+            - 0.7
+            - 0.1
+            - 0.2
+
+input_features:
+  - name: embedding  # Name corresponds to the column that stores the path to the .txt files containing the vectors
+    type: vector  # The input type is 'vector', as you're working with pre-trained embeddings
+    preprocessing:
+      normalization: true  # Normalize vectors, typically important for machine learning models
+
+    encoder:
+      type: dense  # Use a dense encoder for vectors. Alternatively, use 'passthrough' if no encoding is needed.
+
+output_features:
+  - name: label  # Name corresponds to the column that contains the target labels
+    type: binary  # Output type is binary (for classification with two classes)
+    metrics:
+      - accuracy
+      - recall
+      - precision
+      - specificity
+trainer:
+  epochs: 50  # Number of epochs for training
+  batch_size: 4  # Batch size for training
+  learning_rate: 0.0001  # Learning rate for the optimizer
+  optimizer:
+    type: adam  # Use Adam optimizer
+  learning_rate_scheduler:
+    type: reduce_on_plateau  # Reduce learning rate when the metric plateaus
+    metric: accuracy  # Metric to monitor for reducing the learning rate
+    patience: 15  # Number of epochs to wait before reducing the learning rate
+    reduce_rate: 0.5  # Factor by which to reduce the learning rate
+  validation_field: label  # Field to use for validation (must match an output feature)
+  validation_metric: roc_auc  # Metric used for validation (accuracy)
+  early_stop: 30  # Stop training if the validation metric does not improve for 10 epochs
+
