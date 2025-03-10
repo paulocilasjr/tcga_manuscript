@@ -2,6 +2,7 @@
 *.h5
 *.csv
 *.pth
+*.zip
 galaxy_tools/
 # Byte-compiled / optimized / DLL files
 __pycache__/
