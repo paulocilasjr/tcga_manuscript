@@ -1,0 +1,34 @@
+Starting to zip PNG files from /share/lab_goecks/TCGA_deep_learning/image_tiles to image_tiles.zip
+Scanning directories for PNG files in '_tiles' subdirectories...
+Found 289878 PNG files in '_tiles' directories to zip
+Zipping files...
+Zipped 10000/289878 files
+Zipped 20000/289878 files
+Zipped 30000/289878 files
+Zipped 40000/289878 files
+Zipped 50000/289878 files
+Zipped 60000/289878 files
+Zipped 70000/289878 files
+Zipped 80000/289878 files
+Zipped 90000/289878 files
+Zipped 100000/289878 files
+Zipped 110000/289878 files
+Zipped 120000/289878 files
+Zipped 130000/289878 files
+Zipped 140000/289878 files
+Zipped 150000/289878 files
+Zipped 160000/289878 files
+Zipped 170000/289878 files
+Zipped 180000/289878 files
+Zipped 190000/289878 files
+Zipped 200000/289878 files
+Zipped 210000/289878 files
+Zipped 220000/289878 files
+Zipped 230000/289878 files
+Zipped 240000/289878 files
+Zipped 250000/289878 files
+Zipped 260000/289878 files
+Zipped 270000/289878 files
+Zipped 280000/289878 files
+Created zip file: image_tiles.zip with 289878 files in 8273.70 seconds
+Verified 289878 entries in image_tiles.zip
