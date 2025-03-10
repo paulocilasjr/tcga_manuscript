@@ -7,7 +7,7 @@ from datetime import datetime
 
 def analyze_csv(file_path: str):
     """Analyze and visualize data from the embeddings CSV file."""
-    
+
     # Check if file exists
     if not os.path.isfile(file_path):
         print(f"Error: File '{file_path}' does not exist.", file=sys.stderr)
@@ -16,7 +16,7 @@ def analyze_csv(file_path: str):
     # Read CSV with proper encoding and space trimming
     print(f"Reading CSV file: {file_path}", flush=True)
     try:
-        df = pd.read_csv(file_path, dtype={'sample_name': str, 'label': str}, encoding='utf-8', skipinitialspace=True)
+        df = pd.read_csv(file_path, dtype={'sample_name': str, 'label': str}, encoding='utf-8', skipinitialspace=True, delimiter=',')
     except Exception as e:
         print(f"Error: Failed to read CSV file: {e}", file=sys.stderr)
         sys.exit(1)
@@ -27,9 +27,19 @@ def analyze_csv(file_path: str):
     if missing_columns:
         print(f"Error: Missing required columns: {missing_columns}", file=sys.stderr)
         sys.exit(1)
-    print("unique names:")
-    print(df['sample_name'].unique())
-    print("###########################")
+
+    # 🔹 FIX: Ensure 'sample_name' has no leading/trailing spaces and is in correct format
+    df['sample_name'] = df['sample_name'].astype(str).str.strip()
+
+    # Remove any NaN values in the 'sample_name' column before counting unique samples
+    rows_removed = df[df['sample_name'].isna()]  # Capture rows with NaN in 'sample_name'
+    if not rows_removed.empty:
+        print(f"DEBUG: Rows removed due to NaN 'sample_name':")
+        print(rows_removed)  # Print the rows that are being removed for debugging
+    df = df.dropna(subset=['sample_name'])
+
+    # Optional: Normalize case sensitivity
+    df['sample_name'] = df['sample_name'].str.lower()
 
     # 🔹 FIX: Convert 'label' column properly
     df['label'] = df['label'].astype(str).str.strip()  # Remove spaces
@@ -37,9 +47,9 @@ def analyze_csv(file_path: str):
     df = df.dropna(subset=['label'])  # Remove rows where label is NaN
     df['label'] = df['label'].astype(int)  # Convert to integer
 
-    # 🔹 FIX: Ensure all unique sample names are counted correctly
+    # Ensure all unique sample names are counted correctly
     num_rows = len(df)
-    num_unique_samples = len(df['sample_name'].unique()) 
+    num_unique_samples = len(df['sample_name'].unique())
     label_counts = df['label'].value_counts().reindex([0, 1], fill_value=0)  # Ensure both 0 and 1 are counted
 
     print(f"DEBUG: Unique sample names: {num_unique_samples}", flush=True)  # Check final count
@@ -70,7 +80,7 @@ def analyze_csv(file_path: str):
 
     # Figure 2: Boxplot of total tiles per sample by label
     print("Generating boxplot of tiles per sample by label...", flush=True)
-    
+
     # Count tiles (rows) per sample and merge with labels
     tiles_per_sample = df.groupby('sample_name').size().reset_index(name='tile_count')
     sample_labels = df[['sample_name', 'label']].drop_duplicates()
