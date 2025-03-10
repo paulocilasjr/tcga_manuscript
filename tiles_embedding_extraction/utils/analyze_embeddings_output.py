@@ -7,15 +7,16 @@ from datetime import datetime
 
 def analyze_csv(file_path: str):
     """Analyze and visualize data from the embeddings CSV file."""
+    
     # Check if file exists
     if not os.path.isfile(file_path):
         print(f"Error: File '{file_path}' does not exist.", file=sys.stderr)
         sys.exit(1)
 
-    # Read the CSV file
+    # Read the CSV file with proper encoding and trimming spaces
     print(f"Reading CSV file: {file_path}", flush=True)
     try:
-        df = pd.read_csv(file_path)
+        df = pd.read_csv(file_path, dtype={'label': str}, encoding='utf-8', skipinitialspace=True)
     except Exception as e:
         print(f"Error: Failed to read CSV file: {e}", file=sys.stderr)
         sys.exit(1)
@@ -27,10 +28,19 @@ def analyze_csv(file_path: str):
         print(f"Error: Missing required columns: {missing_columns}", file=sys.stderr)
         sys.exit(1)
 
+    # Clean and convert 'label' column
+    df['label'] = df['label'].astype(str).str.strip()  # Remove spaces
+    df['label'] = pd.to_numeric(df['label'], errors='coerce')  # Convert to numeric (invalid -> NaN)
+    df = df.dropna(subset=['label'])  # Remove rows where label is NaN
+    df['label'] = df['label'].astype(int)  # Convert to integer
+
+    # Debugging: Show unique labels to verify
+    print(f"Unique labels found: {df['label'].unique()}", flush=True)
+
     # Basic statistics
     num_rows = len(df)
     num_unique_samples = df['sample_name'].nunique()
-    label_counts = df['label'].value_counts().reindex([0, 1], fill_value=0)  # Count 0s and 1s, default to 0 if missing
+    label_counts = df['label'].value_counts().reindex([0, 1], fill_value=0)  # Ensure both 0 and 1 are counted
 
     print(f"Number of rows: {num_rows}", flush=True)
     print(f"Number of unique sample names: {num_unique_samples}", flush=True)
@@ -59,13 +69,13 @@ def analyze_csv(file_path: str):
 
     # Figure 2: Boxplot of total tiles per sample by label
     print("Generating boxplot of tiles per sample by label...", flush=True)
+    
     # Count tiles (rows) per sample and merge with labels
     tiles_per_sample = df.groupby('sample_name').size().reset_index(name='tile_count')
-    # Merge with original df to get labels (assuming each sample has consistent labels)
     sample_labels = df[['sample_name', 'label']].drop_duplicates()
     tiles_df = pd.merge(tiles_per_sample, sample_labels, on='sample_name', how='left')
 
-    # Filter to only 0 and 1 labels (in case there are NaNs or other values)
+    # Filter to only 0 and 1 labels (in case there are NaNs or unexpected values)
     tiles_df = tiles_df[tiles_df['label'].isin([0, 1])]
 
     if tiles_df.empty:
