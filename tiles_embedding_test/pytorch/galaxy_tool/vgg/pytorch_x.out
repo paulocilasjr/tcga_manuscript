@@ -1,0 +1,3 @@
+Setting random seed to 42
+Using device: cuda
+Loading CSV from ./../../../../tiles_embedding_extraction/vgg11/pytorch_format/tcga_embedding_vgg11_label.csv

@@ -1,0 +1,21 @@
+{
+    "checksum": "JQmKKdhbIBc0r58NrWl92Q==",
+    "data_train_hdf5_fp": "/share/lab_goecks/TCGA_deep_learning/tcga_manuscript/tiles_embedding_test/ludwig/galaxy_tool/vgg11/3ad336f6fdd511ef82fab07b25de6f3c.training.hdf5",
+    "label": {
+        "preprocessing": {
+            "computed_fill_value": null,
+            "fallback_true_label": null,
+            "fill_value": null,
+            "missing_value_strategy": "drop_row"
+        }
+    },
+    "merged_vector": {
+        "preprocessing": {
+            "computed_fill_value": "",
+            "fill_value": "",
+            "missing_value_strategy": "fill_with_const",
+            "vector_size": null
+        },
+        "vector_size": 25088
+    }
+}

@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --job-name=ldw_vgg     # Job name
-#SBATCH --output=ldw_resnet.out  # Output file
-#SBATCH --error=ldw_resnet.err   # Error file
-#SBATCH --ntasks=1                      # Number of tasks
+#SBATCH --job-name=ldw_x_vgg     # Job name
+#SBATCH --output=ldw_x_resnet.out  # Output file
+#SBATCH --error=ldw_x_resnet.err   # Error file
+#SBATCH --ntasks=2                      # Number of tasks
 #SBATCH --cpus-per-task=10              # Number of CPU cores
 #SBATCH --mem=1000G                      # Memory allocation
 #SBATCH --gres=gpu:1                    # Request 1 GPU
@@ -19,4 +19,4 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATHy
 # pip install bitsandbytes --upgrade --no-cache-dir
 
 # Run the Ludwig experiment
-python test_ludwig_xvalidation.py ./../../../../tiles_embedding_extraction/vgg11/tcga_embeddings_vgg11.csv
+python test_ludwig_xvalidation.py ./../../../../tiles_embedding_extraction/vgg11/ludwig_format/tcga_embedding_vgg11_label.csv

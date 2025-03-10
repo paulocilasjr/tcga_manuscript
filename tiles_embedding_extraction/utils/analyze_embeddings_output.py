@@ -13,10 +13,10 @@ def analyze_csv(file_path: str):
         print(f"Error: File '{file_path}' does not exist.", file=sys.stderr)
         sys.exit(1)
 
-    # Read the CSV file with proper encoding and trimming spaces
+    # Read CSV with proper encoding and space trimming
     print(f"Reading CSV file: {file_path}", flush=True)
     try:
-        df = pd.read_csv(file_path, dtype={'label': str}, encoding='utf-8', skipinitialspace=True)
+        df = pd.read_csv(file_path, dtype={'sample_name': str, 'label': str}, encoding='utf-8', skipinitialspace=True)
     except Exception as e:
         print(f"Error: Failed to read CSV file: {e}", file=sys.stderr)
         sys.exit(1)
@@ -27,21 +27,22 @@ def analyze_csv(file_path: str):
     if missing_columns:
         print(f"Error: Missing required columns: {missing_columns}", file=sys.stderr)
         sys.exit(1)
+    print("unique names:")
+    print(df['sample_name'].unique())
+    print("###########################")
 
-    # Clean and convert 'label' column
+    # 🔹 FIX: Convert 'label' column properly
     df['label'] = df['label'].astype(str).str.strip()  # Remove spaces
     df['label'] = pd.to_numeric(df['label'], errors='coerce')  # Convert to numeric (invalid -> NaN)
     df = df.dropna(subset=['label'])  # Remove rows where label is NaN
     df['label'] = df['label'].astype(int)  # Convert to integer
 
-    # Debugging: Show unique labels to verify
-    print(f"Unique labels found: {df['label'].unique()}", flush=True)
-
-    # Basic statistics
+    # 🔹 FIX: Ensure all unique sample names are counted correctly
     num_rows = len(df)
-    num_unique_samples = df['sample_name'].nunique()
+    num_unique_samples = len(df['sample_name'].unique()) 
     label_counts = df['label'].value_counts().reindex([0, 1], fill_value=0)  # Ensure both 0 and 1 are counted
 
+    print(f"DEBUG: Unique sample names: {num_unique_samples}", flush=True)  # Check final count
     print(f"Number of rows: {num_rows}", flush=True)
     print(f"Number of unique sample names: {num_unique_samples}", flush=True)
     print(f"Count of label 0: {label_counts[0]}", flush=True)
@@ -104,3 +105,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=pytorch_gt                # Job name
-#SBATCH --output=%j.out                 # Output file with job ID
-#SBATCH --error=%j.err                  # Error file with job ID
+#SBATCH --job-name=pytorch_x                # Job name
+#SBATCH --output=pytorch_x.out                 # Output file with job ID
+#SBATCH --error=pytorch_x.err                  # Error file with job ID
 #SBATCH --ntasks=1                      # Number of tasks
 #SBATCH --cpus-per-task=10              # Number of CPU cores
 #SBATCH --mem=1000G                     # Memory allocation
