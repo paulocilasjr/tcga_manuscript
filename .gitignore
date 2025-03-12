@@ -1,10 +1,12 @@
 *.npy
+*.parquet
 *.json
 *.hdf5
 *.h5
 *.csv
 *.pth
 *.zip
+experiment_run/
 galaxy_tools/
 # Byte-compiled / optimized / DLL files
 __pycache__/
