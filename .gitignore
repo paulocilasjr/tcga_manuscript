@@ -1,3 +1,5 @@
+*.err
+*.out
 *.npy
 *.parquet
 *.json
