@@ -9,37 +9,45 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_a
 from sklearn.model_selection import StratifiedKFold, train_test_split
 import random
 from scipy import stats
+import logging
 
-# Custom Dataset Class (unchanged)
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+
+# Custom Dataset Class
 class TCGADataset(Dataset):
     def __init__(self, df):
-        print(f"Preparing dataset with {len(df)} samples", flush=True)
-        self.data = df.reset_index(drop=True)
+        self.data = df
 
-        if len(self.data) == 0:
-            raise ValueError("No data found in the provided DataFrame")
-
-        vector_cols = [col for col in self.data.columns if col.startswith('vector')]
-        if not vector_cols:
-            raise ValueError("No vector columns found in the provided DataFrame")
-
-        print("Extracting vectors", flush=True)
-        self.embeddings = np.array(self.data[vector_cols].values, dtype=np.float32)
+        # Extract features (vector1 to vector25088) and labels
+        # Exclude 'sample_name' and 'split' if present, only use vector columns
+        vector_cols = [col for col in df.columns if col.startswith('vector')]
+        self.embeddings = self.data[vector_cols].values.astype(np.float32)
         self.labels = self.data['label'].values.astype(np.float32)
 
-        print("Normalizing embeddings", flush=True)
-        self.embeddings = (self.embeddings - self.embeddings.mean(axis=0)) / self.embeddings.std(axis=0)
-        print(f"Dataset ready with {len(self.data)} samples", flush=True)
+        # Handle NaNs in embeddings before normalization
+        if np.isnan(self.embeddings).sum() > 0:
+            logging.warning("NaN values found in embeddings. Replacing with 0.")
+            self.embeddings = np.nan_to_num(self.embeddings, nan=0.0)
+
+        # Normalize embeddings, handling zero standard deviation
+        means = np.nanmean(self.embeddings, axis=0)  # Use nanmean to ignore any residual NaNs
+        stds = np.nanstd(self.embeddings, axis=0)    # Use nanstd for consistency
+        stds[stds == 0] = 1  # Prevent division by zero
+        self.embeddings = (self.embeddings - means) / stds
+
+        # Final check for NaNs after normalization
+        if np.isnan(self.embeddings).sum() > 0:
+            logging.error("NaN values still present after normalization.")
+            raise ValueError("NaN values in embeddings after normalization.")
 
     def __len__(self):
-        return len(self.data)
+        return len(self.labels)
 
     def __getitem__(self, idx):
-        embedding = torch.tensor(self.embeddings[idx], dtype=torch.float32)
-        label = torch.tensor(self.labels[idx], dtype=torch.float32)
-        return embedding, label
+        return self.embeddings[idx], self.labels[idx]
 
-# Model Definition (unchanged)
+# Model Definition
 class TCGAModel(nn.Module):
     def __init__(self, input_dim):
         super(TCGAModel, self).__init__()
@@ -56,7 +64,7 @@ class TCGAModel(nn.Module):
     def forward(self, x):
         return self.encoder(x)
 
-# Training and Evaluation Functions (unchanged)
+# Training Function with Gradient Clipping
 def train_epoch(model, loader, criterion, optimizer, device):
     model.train()
     running_loss = 0.0
@@ -70,6 +78,8 @@ def train_epoch(model, loader, criterion, optimizer, device):
         outputs = model(embeddings).squeeze(-1)
         loss = criterion(outputs, labels)
         loss.backward()
+        # Add gradient clipping to prevent exploding gradients
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
         optimizer.step()
 
         running_loss += loss.item() * embeddings.size(0)
@@ -84,6 +94,7 @@ def train_epoch(model, loader, criterion, optimizer, device):
     accuracy = accuracy_score(all_labels, all_preds)
     return epoch_loss, accuracy
 
+# Evaluation Function with NaN Handling
 def evaluate(model, loader, criterion, device):
     model.eval()
     running_loss = 0.0
@@ -100,6 +111,8 @@ def evaluate(model, loader, criterion, device):
 
             running_loss += loss.item() * embeddings.size(0)
             probs = torch.sigmoid(outputs).cpu().numpy()
+            # Replace NaN probabilities with 0.5 (neutral prediction)
+            probs = np.nan_to_num(probs, nan=0.5)
             preds = probs > 0.5
             all_preds.extend(preds)
             all_labels.extend(labels.cpu().numpy())
@@ -110,10 +123,11 @@ def evaluate(model, loader, criterion, device):
 
     epoch_loss = running_loss / len(loader.dataset)
     accuracy = accuracy_score(all_labels, all_preds)
-    precision = precision_score(all_labels, all_preds)
-    recall = recall_score(all_labels, all_preds)
-    roc_auc = roc_auc_score(all_labels, all_probs)
-    f1 = f1_score(all_labels, all_preds)
+    # Handle cases where metrics might be undefined
+    precision = precision_score(all_labels, all_preds, zero_division=0)
+    recall = recall_score(all_labels, all_preds, zero_division=0)
+    roc_auc = roc_auc_score(all_labels, all_probs) if not np.isnan(all_probs).any() else 0.0
+    f1 = f1_score(all_labels, all_preds, zero_division=0)
 
     tn, fp, fn, tp = confusion_matrix(all_labels, all_preds).ravel()
     specificity = tn / (tn + fp) if (tn + fp) > 0 else 0.0
@@ -128,7 +142,7 @@ def evaluate(model, loader, criterion, device):
         'f1': f1
     }
 
-# Set random seed (unchanged)
+# Set Random Seed
 def set_seed(seed):
     random.seed(seed)
     np.random.seed(seed)
@@ -139,7 +153,7 @@ def set_seed(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-# Main Training Loop with Enhanced Printing
+# Main Training Loop
 def main():
     parser = argparse.ArgumentParser(description='Train a TCGA model with PyTorch and 10-fold CV')
     parser.add_argument('--dataset', type=str, required=True, help='Path to the CSV dataset file')
@@ -264,28 +278,24 @@ def main():
         for key, value in test_metrics.items():
             print(f"  {key.capitalize()}: {value:.4f}", flush=True)
 
-    # Compute average metrics and confidence intervals for all splits
+    # Compute and print average metrics and 95% CI for all splits at the end
     metrics_keys = ['loss', 'accuracy', 'precision', 'recall', 'roc_auc', 'specificity', 'f1']
     split_names = ['Train', 'Validation', 'Test']
 
-    for split in split_names:
+    print("\n=== Final 10-Fold Cross-Validation Summary ===", flush=True)
+    for split_idx, split in enumerate(split_names):
         split_key = split.lower()
-        avg_metrics = {key: np.mean([m[key] for m in fold_metrics[split_key]]) for key in metrics_keys}
-        std_metrics = {key: np.std([m[key] for m in fold_metrics[split_key]]) for key in metrics_keys}
-
-        # 95% CI using t-distribution (n=10 folds, df=9)
-        confidence_level = 0.95
-        t_critical = stats.t.ppf((1 + confidence_level) / 2, df=9)
-        ci_metrics = {}
+        # Collect all values for each metric across folds
+        metric_values = {key: [m[key] for m in fold_metrics[split_key]] for key in metrics_keys}
+        
+        print(f"\n10-Fold Cross-Validation Results ({split} Set):")
+        print("Average Metrics:")
         for key in metrics_keys:
-            margin_error = t_critical * std_metrics[key] / np.sqrt(10)
-            ci_metrics[key] = (avg_metrics[key] - margin_error, avg_metrics[key] + margin_error)
-
-        # Output results for this split
-        print(f"\n10-Fold Cross-Validation Results ({split} Set):", flush=True)
-        print("Average Metrics:", flush=True)
-        for key in metrics_keys:
-            print(f"  {key.capitalize()}: {avg_metrics[key]:.4f} (95% CI: {ci_metrics[key][0]:.4f} - {ci_metrics[key][1]:.4f})", flush=True)
+            mean_val = np.mean(metric_values[key])
+            # Using percentile method for 95% CI (non-parametric, no assumption of normality)
+            ci_lower = np.percentile(metric_values[key], 2.5)
+            ci_upper = np.percentile(metric_values[key], 97.5)
+            print(f"  {key.capitalize()}: {mean_val:.4f} (95% CI: {ci_lower:.4f} - {ci_upper:.4f})")
 
 if __name__ == "__main__":
     main()
