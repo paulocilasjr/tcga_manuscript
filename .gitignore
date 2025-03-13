@@ -10,6 +10,7 @@
 *.zip
 experiment_run/
 galaxy_tools/
+logs/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
