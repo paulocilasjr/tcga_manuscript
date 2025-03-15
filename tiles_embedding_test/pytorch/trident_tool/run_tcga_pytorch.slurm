@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=pytorch_exp                # Job name
+#SBATCH --job-name=pytorch_trident                # Job name
 #SBATCH --output=%j.out                 # Output file with job ID
 #SBATCH --error=%j.err                  # Error file with job ID
 #SBATCH --ntasks=1                      # Number of tasks

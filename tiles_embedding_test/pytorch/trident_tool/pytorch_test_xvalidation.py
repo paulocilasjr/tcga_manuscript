@@ -19,7 +19,15 @@ class TCGADataset(Dataset):
         if len(self.data) == 0:
             raise ValueError("No data found in the provided DataFrame")
 
-        feature_cols = [f'feature_{i}' for i in range(1536)]
+        # Identify all columns starting with 'feature_'
+        feature_cols = [col for col in self.data.columns if col.startswith("feature_")]
+        if not feature_cols:
+            raise KeyError("No columns starting with 'feature_' found in the DataFrame.")
+
+        # Sort feature columns by their numeric suffix (assumes format: 'feature_i' where i starts from 1)
+        feature_cols = sorted(feature_cols, key=lambda x: int(x.split('_')[1]))
+        print(f"Identified {len(feature_cols)} feature columns: {feature_cols}", flush=True)
+        
         print("Extracting features", flush=True)
         self.embeddings = np.array(self.data[feature_cols].values, dtype=np.float32)
         self.labels = self.data['label'].values.astype(np.float32)
