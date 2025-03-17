@@ -58,6 +58,6 @@ def zip_image_tiles(root_dir, output_zip):
         print(f"Error: {output_zip} is not a valid ZIP file", flush=True)
 
 if __name__ == "__main__":
-    root_directory = os.path.abspath("/share/lab_goecks/TCGA_deep_learning/image_tiles")
-    output_zip_file = "image_tiles.zip"
+    root_directory = os.path.abspath("/share/lab_goecks/TCGA_deep_learning/batch_lists/")
+    output_zip_file = "image_tiles_full.zip"
     zip_image_tiles(root_directory, output_zip_file)
