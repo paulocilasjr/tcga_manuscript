@@ -24,6 +24,7 @@ def process_zip_and_match(zip_path, metadata_csv_path):
         return None, None
 
     sample_names = metadata_df['sample_name'].tolist()
+    print(len(sample_names))
 
     matched_count = 0
     unmatched_count = 0

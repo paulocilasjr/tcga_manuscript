@@ -4,56 +4,55 @@ import time
 
 def zip_image_tiles(root_dir, output_zip):
     """
-    Zip PNG files from directories ending with '_tiles' sequentially.
+    Zip PNG files from '_tiles' directories within 'TCGA' directories into a single zip file.
 
     Args:
-        root_dir (str): Root directory containing case subdirectories.
+        root_dir (str): Root directory containing 'TCGA' subdirectories.
         output_zip (str): Path to the output zip file.
     """
     start_time = time.time()
     print(f"Starting to zip PNG files from {root_dir} to {output_zip}", flush=True)
 
-    # Use ZIP_STORED for no compression
-    with zipfile.ZipFile(output_zip, 'w', compression=zipfile.ZIP_STORED) as zipf:
-        png_files = []
-        
-        # Use os.walk for efficient file discovery
-        print("Scanning directories for PNG files in '_tiles' subdirectories...", flush=True)
-        for dirpath, _, filenames in os.walk(root_dir):
-            if os.path.basename(dirpath).endswith('_tiles'):
-                for file in filenames:
-                    if file.endswith(".png"):
-                        file_path = os.path.join(dirpath, file)
-                        png_files.append(file_path)
-        
-        total_files = len(png_files)
-        print(f"Found {total_files} PNG files in '_tiles' directories to zip", flush=True)
-        
-        if total_files == 0:
-            print("No PNG files found in '_tiles' directories, exiting", flush=True)
-            return
+    total_files_added = 0
 
-        # Sequential zipping with progress tracking
-        print("Zipping files...", flush=True)
-        for i, file_path in enumerate(png_files, 1):
-            try:
-                rel_path = os.path.relpath(file_path, root_dir)
-                zipf.write(file_path, rel_path)
-                if i % 10000 == 0:
-                    print(f"Zipped {i}/{total_files} files", flush=True)
-            except Exception as e:
-                print(f"Error zipping {file_path}: {e}", flush=True)
+    # Open the zip file in 'w' mode to create a new zip file
+    with zipfile.ZipFile(output_zip, 'w', compression=zipfile.ZIP_STORED) as zipf:
+        # Traverse the directory tree
+        for dirpath, _, filenames in os.walk(root_dir):
+            # Check if parent directory starts with 'TCGA' and current directory ends with '_tiles'
+            parent_dir = os.path.basename(os.path.dirname(dirpath))
+            current_dir = os.path.basename(dirpath)
+            if parent_dir.startswith('TCGA') and current_dir.endswith('_tiles'):
+                print(f"Processing {dirpath}", flush=True)
+                png_files = [f for f in filenames if f.endswith('.png')]
+                if not png_files:
+                    print(f"No PNG files found in {dirpath}, skipping", flush=True)
+                    continue
+
+                # Add each PNG file to the zip
+                for file in png_files:
+                    file_path = os.path.join(dirpath, file)
+                    rel_path = os.path.relpath(file_path, root_dir)
+                    try:
+                        zipf.write(file_path, rel_path)
+                        total_files_added += 1
+                        if total_files_added % 10000 == 0:
+                            print(f"Added {total_files_added} files so far", flush=True)
+                    except Exception as e:
+                        print(f"Error adding {file_path}: {e}", flush=True)
+
+                print(f"Added {len(png_files)} files from {dirpath}", flush=True)
 
     elapsed_time = time.time() - start_time
-    print(f"Created zip file: {output_zip} with {total_files} files in {elapsed_time:.2f} seconds", flush=True)
+    print(f"Completed zipping {total_files_added} files to {output_zip} in {elapsed_time:.2f} seconds", flush=True)
 
-    # Verify ZIP integrity
+    # Verify the zip file
     if os.path.exists(output_zip) and zipfile.is_zipfile(output_zip):
         with zipfile.ZipFile(output_zip, 'r') as zip_check:
             zipped_count = len(zip_check.namelist())
             print(f"Verified {zipped_count} entries in {output_zip}", flush=True)
-            if zipped_count != total_files:
-                print(f"Warning: Expected {total_files} files, but ZIP contains {zipped_count}", flush=True)
+            if zipped_count != total_files_added:
+                print(f"Warning: Expected {total_files_added} files, but ZIP contains {zipped_count}", flush=True)
     else:
         print(f"Error: {output_zip} is not a valid ZIP file", flush=True)
 
