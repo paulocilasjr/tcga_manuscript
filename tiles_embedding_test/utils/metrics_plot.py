@@ -92,5 +92,5 @@ fig.patch.set_facecolor('#fafafa')
 
 plt.tight_layout()
 plt.title('Comparison of Test Metrics Across Models with 95% CI', fontsize=14, pad=15)
-plt.savefig('/mnt/data/comparison_metrics_updated.png')
+plt.savefig('comparison_metrics.png')
 plt.show()
