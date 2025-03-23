@@ -3,18 +3,18 @@ import numpy as np
 
 # Updated results list with only Test splits
 results = [
-    'Pytorch ResNet50 MILc Leak Test',
-    'Pytorch ResNet50 MILc No Leak Test',
-    'Pytorch ResNet50 MILc Seeds Test',
-    'Pytorch ResNet50 MILf Leak Test',
-    'Pytorch ResNet50 MILf No Leak Test',
-    'Pytorch ResNet50 MILf Seeds Test',
-    'Pytorch VGG11 MILc Leak Test',
-    'Pytorch VGG11 MILc No Leak Test',
-    'Pytorch VGG11 MILc Seeds Test',
-    'Ludwig ResNet50 MILc Test',
-    'Ludwig ResNet50 MILf Test',
-    'Ludwig VGG11 MILc Test'
+    'Pytorch ResNet50\nMILc Leak Test',
+    'Pytorch ResNet50\nMILc No Leak Test',
+    'Pytorch ResNet50\nMILc Seeds Test',
+    'Pytorch ResNet50\nMILf Leak Test',
+    'Pytorch ResNet50\nMILf No Leak Test',
+    'Pytorch ResNet50\nMILf Seeds Test',
+    'Pytorch VGG11\nMILc Leak Test',
+    'Pytorch VGG11\nMILc No Leak Test',
+    'Pytorch VGG11\nMILc Seeds Test',
+    'Ludwig ResNet50\nMILc Test',
+    'Ludwig ResNet50\nMILf Test',
+    'Ludwig VGG11\nMILc Test'
 ]
 
 # Metric arrays (only Test values)
@@ -117,7 +117,7 @@ ci_upper = [accuracy_ci_upper, precision_ci_upper, recall_ci_upper, roc_auc_ci_u
 colors = ['#66C2A5', '#FC8D62', '#8DA0CB', '#E78AC3', '#A6D854', '#FFD92F']
 loss_color = '#B3B3B3'
 
-fig, ax1 = plt.subplots(figsize=(14, 6))  # Adjusted figure size back to original
+fig, ax1 = plt.subplots(figsize=(14, 6))
 ax2 = ax1.twinx()
 
 bar_width = 0.12
@@ -146,9 +146,21 @@ ax1.set_xlabel('Models (Test Split)', fontsize=12)
 ax1.set_ylabel('Performance Metrics Evaluation', fontsize=12)
 ax2.set_ylabel('Loss', fontsize=12)
 ax1.set_xticks(x)
-ax1.set_xticklabels(results, fontsize=10, rotation=15)  # Reduced rotation angle
-ax1.set_ylim(0, 1.1)  # Kept ylim for consistency
-ax2.set_ylim(0, 4)    # Kept ylim to accommodate Ludwig VGG11 MILc Test loss
+ax1.set_xticklabels(results, fontsize=8, rotation=45, ha='right', wrap=True)
+
+# Customize label colors based on content
+for label in ax1.get_xticklabels():
+    text = label.get_text()
+    if 'Leak Test' in text:
+        label.set_color('red')
+    if 'No Leak Test' in text:
+        label.set_color('blue')
+    elif 'Seeds Test' in text:
+        label.set_color('green')
+    # Labels without Leak/No Leak/Seeds (e.g., Ludwig models) remain default (black)
+
+ax1.set_ylim(0, 1.1)
+ax2.set_ylim(0, 4)
 
 ax1.grid(True, axis='y', linestyle='--', alpha=0.7)
 
@@ -161,5 +173,5 @@ fig.patch.set_facecolor('#fafafa')
 
 plt.tight_layout()
 plt.title('Comparison of Test Metrics Across Models with 95% CI', fontsize=14, pad=15)
-plt.savefig('MIL_test_metrics.png', dpi=300, bbox_inches='tight')
+plt.savefig('comparison_test_metrics.png', dpi=300, bbox_inches='tight')
 plt.show()
