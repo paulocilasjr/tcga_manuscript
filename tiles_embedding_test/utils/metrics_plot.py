@@ -50,42 +50,41 @@ ci_upper = [accuracy_ci_upper, precision_ci_upper, recall_ci_upper, roc_auc_ci_u
 colors = ['#66C2A5', '#FC8D62', '#8DA0CB', '#E78AC3', '#A6D854', '#FFD92F']
 loss_color = '#B3B3B3'
 
-fig, ax1 = plt.subplots(figsize=(6, 14))  # Swapped dimensions for vertical orientation
-ax2 = ax1.twiny()  # Changed to twiny for horizontal bars
+fig, ax1 = plt.subplots(figsize=(14, 6))
+ax2 = ax1.twinx()
 
-bar_height = 0.12  # Changed to bar_height
-y = np.arange(len(results))  # Changed x to y
+bar_width = 0.12
+x = np.arange(len(results))
 n_metrics = len(metrics)
 
-# Plot horizontal bars instead of vertical
 for i, (metric, name, color, lower, upper) in enumerate(zip(metrics, metric_names, colors, ci_lower, ci_upper)):
-    offset = (i - n_metrics / 2) * bar_height
-    bars = ax1.barh(y + offset, metric, bar_height, label=name, color=color, edgecolor='white', linewidth=0.5)
-    xerr_lower = [m - l if l is not None else 0 for m, l in zip(metric, lower)]
-    xerr_upper = [u - m if u is not None else 0 for m, u in zip(metric, upper)]
-    xerr = np.array([xerr_lower, xerr_upper])
-    ax1.errorbar(metric, y + offset, xerr=xerr, fmt='none', color='black', capsize=3, linewidth=1)
+    offset = (i - n_metrics / 2) * bar_width
+    bars = ax1.bar(x + offset, metric, bar_width, label=name, color=color, edgecolor='white', linewidth=0.5)
+    yerr_lower = [m - l if l is not None else 0 for m, l in zip(metric, lower)]
+    yerr_upper = [u - m if u is not None else 0 for m, u in zip(metric, upper)]
+    yerr = np.array([yerr_lower, yerr_upper])
+    ax1.errorbar(x + offset, metric, yerr=yerr, fmt='none', color='black', capsize=3, linewidth=1)
 
-loss_offset = (n_metrics / 2) * bar_height + bar_height * 0.5
-bars = ax2.barh(y + loss_offset, loss, bar_height, label='Loss', color=loss_color, edgecolor='white', linewidth=0.5)
-xerr_lower = [l - ll if ll is not None else 0 for l, ll in zip(loss, loss_ci_lower)]
-xerr_upper = [lu - l if lu is not None else 0 for l, lu in zip(loss, loss_ci_upper)]
-xerr = np.array([xerr_lower, xerr_upper])
-ax2.errorbar(loss, y + loss_offset, xerr=xerr, fmt='none', color='black', capsize=3, linewidth=1)
+loss_offset = (n_metrics / 2) * bar_width + bar_width * 0.5
+bars = ax2.bar(x + loss_offset, loss, bar_width, label='Loss', color=loss_color, edgecolor='white', linewidth=0.5)
+yerr_lower = [l - ll if ll is not None else 0 for l, ll in zip(loss, loss_ci_lower)]
+yerr_upper = [lu - l if lu is not None else 0 for l, lu in zip(loss, loss_ci_upper)]
+yerr = np.array([yerr_lower, yerr_upper])
+ax2.errorbar(x + loss_offset, loss, yerr=yerr, fmt='none', color='black', capsize=3, linewidth=1)
 
-# Add a thin red dotted line at x=0.7 on ax1 (changed from y to x)
-ax1.axvline(x=0.7, color='red', linestyle=':', linewidth=1, label='Threshold 0.7')
+# Add a thin red dotted line at y=0.7 on ax1
+ax1.axhline(y=0.7, color='red', linestyle=':', linewidth=1, label='Threshold 0.7')
 
-ax1.set_ylabel('Models', fontsize=12)
-ax1.set_xlabel('Performance Metrics Evaluation', fontsize=12)
-ax2.set_xlabel('Loss', fontsize=12)
-ax1.set_yticks(y)
-# Modified xticklabels to allow line breaks
-ax1.set_yticklabels([label.replace(' ', '\n') for label in results], fontsize=10)
-ax1.set_xlim(0, 1.1)  # Changed ylim to xlim
-ax2.set_xlim(0, 3)    # Changed ylim to xlim
+ax1.set_xlabel('Models', fontsize=12)
+ax1.set_ylabel('Performance Metrics Evaluation', fontsize=12)
+ax2.set_ylabel('Loss', fontsize=12)
+ax1.set_xticks(x)
+# Modified xticklabels with line breaks and 90-degree rotation
+ax1.set_xticklabels([label.replace(' ', '\n') for label in results], fontsize=10, rotation=90)
+ax1.set_ylim(0, 1.1)
+ax2.set_ylim(0, 3)
 
-ax1.grid(True, axis='x', linestyle='--', alpha=0.7)  # Changed axis from 'y' to 'x'
+ax1.grid(True, axis='y', linestyle='--', alpha=0.7)
 
 lines1, labels1 = ax1.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
