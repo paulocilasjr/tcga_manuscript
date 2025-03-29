@@ -19,8 +19,6 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 
 # Run the Python script
-python ./../../galaxy_tools/ludwig_mil.py --embeddings_csv ./../../tiles_embedding_extraction/resnet/tcga_embeddings_resnet50_name_mod.csv --metadata_csv ./../../utils/metadata.csv --dataleak --balance_enforced --bag_size 100 --pooling_method max_pooling --output_csv tcga_mil_resnet50_pytorch_by_sample_truncated.csv --by_sample 2 --truncate_bags
-
-#--imbalance_cap 10
+python head_inclusion_script.py 
 # Exit with success
 exit 0
