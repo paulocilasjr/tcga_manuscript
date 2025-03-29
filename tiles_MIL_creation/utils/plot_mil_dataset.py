@@ -1,11 +1,11 @@
-import pandas as pd 
-import matplotlib.pyplot as plt 
-import seaborn as sns 
-import sys 
-import os 
-from datetime import datetime 
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import sys
+import os
+from datetime import datetime
 
-def analyze_csv(file_path: str): 
+def analyze_csv(file_path: str):
     """Analyze and visualize data from the bagged embeddings CSV file."""
 
     # Check if file exists
@@ -57,14 +57,31 @@ def analyze_csv(file_path: str):
     # Assign numeric labels to bag_samples
     df['bag_sample_id'] = pd.factorize(df['bag_samples'])[0] + 1
 
-    # Figure 1: Histogram of bag sizes
-    print("Generating histogram of bag sizes...")
-    plt.figure(figsize=(10, 6))
-    sns.histplot(df['bag_size'], bins=30, kde=True)
+    # Figure 1: Histogram of bag sizes (discrete bins, shows all sizes including small ones)
+    print("Generating histogram of bag sizes...", flush=True)
+    plt.figure(figsize=(12, 6))
+
+    # Calculate the full range of integer bag sizes
+    min_size = int(df['bag_size'].min())
+    max_size = int(df['bag_size'].max())
+    bins = range(min_size, max_size + 2)  # +2 to include the last bin edge
+
+    # Plot with clearly defined bins
+    ax = sns.histplot(df['bag_size'], bins=bins, discrete=True, color='skyblue', edgecolor='black')
+
+    # Annotate bars with frequency count
+    for p in ax.patches:
+        height = int(p.get_height())
+        if height > 0:
+            ax.annotate(str(height), (p.get_x() + p.get_width() / 2., height),
+                        ha='center', va='bottom', fontsize=8)
+
     plt.title('Distribution of Bag Sizes')
     plt.xlabel('Bag Size')
     plt.ylabel('Frequency')
-    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.tight_layout()
+
     hist_plot_file = os.path.join(output_dir, f"bag_size_distribution_{timestamp}.png")
     plt.savefig(hist_plot_file)
     plt.close()
