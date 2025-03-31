@@ -1,62 +1,56 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import json
 
-# Updated results with new order
-results = [
-    'Pytorch UNIv2 cross-validation',
-    'Ludwig UNIv2',
-    'Pytorch Resnet50_f cross-validation',
-    'Ludwig Resnet50_f',
-    'Pytorch Resnet50_c cross-validation',
-    'Ludwig Resnet50_c',
-    'Ludwig VGG11_f',
-    'Pytorch VGG11 cross-validation',
-    'Ludwig VGG11'
-]
+# Load data from JSON file
+with open('metrics_to_plot.json', 'r') as f:
+    data = json.load(f)
 
-# Define the new order index mapping
-new_order = [3, 7, 1, 5, 0, 4, 8, 2, 6]
+# Extract data from JSON
+results = [entry['model'] for entry in data]
+loss = [entry['loss']['value'] for entry in data]
+loss_ci_lower = [entry['loss']['ci_lower'] for entry in data]
+loss_ci_upper = [entry['loss']['ci_upper'] for entry in data]
 
-def reorder_list(lst, order):
-    return [lst[i] for i in order]
+accuracy = [entry['accuracy']['value'] for entry in data]
+accuracy_ci_lower = [entry['accuracy']['ci_lower'] for entry in data]
+accuracy_ci_upper = [entry['accuracy']['ci_upper'] for entry in data]
 
-# Reorder all metric lists
-loss = reorder_list([1.0785, 1.9936, 0.5503, 0.6007, 0.8014, 1.0982, 1.1385, 0.9623, 1.1385], new_order)
-loss_ci_lower = reorder_list([0.8674, None, 0.5208, None, 0.6932, None, None, 0.7394, None], new_order)
-loss_ci_upper = reorder_list([1.2895, None, 0.5799, None, 0.9473, None, None, 2.9727, None], new_order)
+precision = [entry['precision']['value'] for entry in data]
+precision_ci_lower = [entry['precision']['ci_lower'] for entry in data]
+precision_ci_upper = [entry['precision']['ci_upper'] for entry in data]
 
-accuracy = reorder_list([0.7592, 0.7398, 0.7613, 0.7532, 0.5822, 0.5924, 0.5377, 0.5814, 0.6100], new_order)
-accuracy_ci_lower = reorder_list([0.7424, None, 0.7361, None, 0.5669, None, None, 0.5550, None], new_order)
-accuracy_ci_upper = reorder_list([0.7760, None, 0.7865, None, 0.6051, None, None, 0.6281, None], new_order)
+recall = [entry['recall']['value'] for entry in data]
+recall_ci_lower = [entry['recall']['ci_lower'] for entry in data]
+recall_ci_upper = [entry['recall']['ci_upper'] for entry in data]
 
-precision = reorder_list([0.8056, 0.7850, 0.7613, 0.8082, 0.5769, 0.6096, 0.7585, 0.5734, 0.6296], new_order)
-precision_ci_lower = reorder_list([0.7907, None, 0.7361, None, 0.4560, None, None, 0.4608, None], new_order)
-precision_ci_upper = reorder_list([0.8206, None, 0.7865, None, 0.6459, None, None, 0.6939, None], new_order)
+roc_auc = [entry['roc_auc']['value'] for entry in data]
+roc_auc_ci_lower = [entry['roc_auc']['ci_lower'] for entry in data]
+roc_auc_ci_upper = [entry['roc_auc']['ci_upper'] for entry in data]
 
-recall = reorder_list([0.9019, 0.8859, 1.0000, 0.8931, 0.5558, 0.5039, 0.7953, 0.5450, 0.5258], new_order)
-recall_ci_lower = reorder_list([0.8856, None, 1.0000, None, 0.4591, None, None, 0.4739, None], new_order)
-recall_ci_upper = reorder_list([0.9182, None, 1.0000, None, 0.5986, None, None, 0.5938, None], new_order)
+specificity = [entry['specificity']['value'] for entry in data]
+specificity_ci_lower = [entry['specificity']['ci_lower'] for entry in data]
+specificity_ci_upper = [entry['specificity']['ci_upper'] for entry in data]
 
-roc_auc = reorder_list([0.7057, 0.6930, 0.5000, 0.6571, 0.6238, 0.6435, 0.9264, 0.6241, 0.6597], new_order)
-roc_auc_ci_lower = reorder_list([0.6625, None, 0.5000, None, 0.5797, None, None, 0.5911, None], new_order)
-roc_auc_ci_upper = reorder_list([0.7490, None, 0.5000, None, 0.6579, None, None, 0.7104, None], new_order)
+f1_score = [entry['f1_score']['value'] for entry in data]
+f1_score_ci_lower = [entry['f1_score']['ci_lower'] for entry in data]
+f1_score_ci_upper = [entry['f1_score']['ci_upper'] for entry in data]
 
-specificity = reorder_list([0.2996, 0.3454, 0.0000, 0.2739, 0.6164, 0.6801, 0.6510, 0.6228, 0.6934], new_order)
-specificity_ci_lower = reorder_list([0.2537, None, 0.0000, None, 0.5913, None, None, 0.5613, None], new_order)
-specificity_ci_upper = reorder_list([0.3455, None, 0.0000, None, 0.6501, None, None, 0.6998, None], new_order)
-
-f1_score = reorder_list([0.8508, 0.8325, 0.8640, 0.8486, 0.5703, 0.5530, 0.5377, 0.5544, 0.5732], new_order)
-f1_score_ci_lower = reorder_list([0.8397, None, 0.8477, None, 0.4591, None, None, 0.4896, None], new_order)
-f1_score_ci_upper = reorder_list([0.8619, None, 0.8804, None, 0.6166, None, None, 0.6214, None], new_order)
-
+# Define metrics and associated data
 metrics = [accuracy, precision, recall, roc_auc, specificity, f1_score]
 metric_names = ['Accuracy', 'Precision', 'Recall', 'ROC-AUC', 'Specificity', 'F1-Score']
 ci_lower = [accuracy_ci_lower, precision_ci_lower, recall_ci_lower, roc_auc_ci_lower, specificity_ci_lower, f1_score_ci_lower]
 ci_upper = [accuracy_ci_upper, precision_ci_upper, recall_ci_upper, roc_auc_ci_upper, specificity_ci_upper, f1_score_ci_upper]
 
-colors = ['#66C2A5', '#FC8D62', '#8DA0CB', '#E78AC3', '#A6D854', '#FFD92F']
-loss_color = '#B3B3B3'
+# Okabe-Ito colorblind-friendly palette (muted for publication)
+colors = ['#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00']
+loss_color = '#CC79A7'  # Distinct color for loss
+label_colors = ['#000000', '#666666', '#333333', '#999999']  # Grayscale for x-axis labels (pairs)
 
+# Hatching patterns for grayscale differentiation
+hatches = ['/', '\\', '|', '-', '+', 'x']
+
+# Create figure and axes
 fig, ax1 = plt.subplots(figsize=(14, 6))
 ax2 = ax1.twinx()
 
@@ -64,43 +58,55 @@ bar_width = 0.12
 x = np.arange(len(results))
 n_metrics = len(metrics)
 
-for i, (metric, name, color, lower, upper) in enumerate(zip(metrics, metric_names, colors, ci_lower, ci_upper)):
+# Plot bars for each metric
+for i, (metric, name, color, lower, upper, hatch) in enumerate(zip(metrics, metric_names, colors, ci_lower, ci_upper, hatches)):
     offset = (i - n_metrics / 2) * bar_width
-    bars = ax1.bar(x + offset, metric, bar_width, label=name, color=color, edgecolor='white', linewidth=0.5)
+    bars = ax1.bar(x + offset, metric, bar_width, label=name, color=color, edgecolor='black', linewidth=0.5, hatch=hatch)
     yerr_lower = [m - l if l is not None else 0 for m, l in zip(metric, lower)]
     yerr_upper = [u - m if u is not None else 0 for m, u in zip(metric, upper)]
     yerr = np.array([yerr_lower, yerr_upper])
     ax1.errorbar(x + offset, metric, yerr=yerr, fmt='none', color='black', capsize=3, linewidth=1)
 
+# Plot loss bars
 loss_offset = (n_metrics / 2) * bar_width + bar_width * 0.5
-bars = ax2.bar(x + loss_offset, loss, bar_width, label='Loss', color=loss_color, edgecolor='white', linewidth=0.5)
+bars = ax2.bar(x + loss_offset, loss, bar_width, label='Loss', color=loss_color, edgecolor='black', linewidth=0.5, hatch='.')
 yerr_lower = [l - ll if ll is not None else 0 for l, ll in zip(loss, loss_ci_lower)]
 yerr_upper = [lu - l if lu is not None else 0 for l, lu in zip(loss, loss_ci_upper)]
 yerr = np.array([yerr_lower, yerr_upper])
 ax2.errorbar(x + loss_offset, loss, yerr=yerr, fmt='none', color='black', capsize=3, linewidth=1)
 
-# Add a thin red dotted line at y=0.7 on ax1
-ax1.axhline(y=0.7, color='red', linestyle=':', linewidth=1, label='Threshold 0.7')
+# Add threshold line
+threshold_line = ax1.axhline(y=0.7, color='black', linestyle='--', linewidth=1, label='Threshold (0.7)')
 
-ax1.set_xlabel('Models', fontsize=12)
-ax1.set_ylabel('Performance Metrics Evaluation', fontsize=12)
-ax2.set_ylabel('Loss', fontsize=12)
+# Customize axes with DejaVu Sans
+ax1.set_xlabel('Models', fontsize=12, fontfamily='DejaVu Sans')
+ax1.set_ylabel('Performance Metrics', fontsize=12, fontfamily='DejaVu Sans')
+ax2.set_ylabel('Loss', fontsize=12, fontfamily='DejaVu Sans')
 ax1.set_xticks(x)
-# Modified xticklabels with line breaks and 90-degree rotation
-ax1.set_xticklabels([label.replace(' ', '\n') for label in results], fontsize=10, rotation=90)
 ax1.set_ylim(0, 1.1)
 ax2.set_ylim(0, 3)
 
-ax1.grid(True, axis='y', linestyle='--', alpha=0.7)
+# Set x-axis labels with pair-wise grayscale coloring
+xticklabels = [label.replace(' ', '\n') for label in results]
+ax1.set_xticklabels([])  # Clear default labels
+for i, label in enumerate(xticklabels):
+    color_idx = (i // 2) % len(label_colors)  # Pair-wise color assignment
+    ax1.text(x[i], -0.25, label, ha='center', va='top', fontsize=10, rotation=90, color=label_colors[color_idx], fontfamily='DejaVu Sans')
 
+# Adjust plot limits
+plt.subplots_adjust(bottom=0.35)
+
+# Add grid and legend
+ax1.grid(True, axis='y', linestyle='--', alpha=0.3)
 lines1, labels1 = ax1.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
-ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left', bbox_to_anchor=(1.15, 1), fontsize=10)
+ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper center', bbox_to_anchor=(0.5, -0.25), ncol=4, fontsize=10, frameon=False, prop={'family': 'DejaVu Sans'})
 
-ax1.set_facecolor('#f5f5f5')
-fig.patch.set_facecolor('#fafafa')
+# Remove background colors for publication clarity
+ax1.set_facecolor('white')
+fig.patch.set_facecolor('white')
 
-plt.tight_layout()
-plt.title('Comparison of Test Metrics Across Models with 95% CI', fontsize=14, pad=15)
-plt.savefig('comparison_metrics.png')
+# Finalize plot
+plt.title('Comparison of Test Metrics Across Models with 95% CI', fontsize=14, pad=15, fontfamily='DejaVu Sans')
+plt.savefig('comparison_metrics_journal.png', dpi=300, bbox_inches='tight')
 plt.show()
