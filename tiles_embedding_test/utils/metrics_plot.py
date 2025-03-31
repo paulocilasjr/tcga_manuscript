@@ -1,46 +1,53 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Updated results with new entries
+# Updated results with new order
 results = [
-    'Pytorch Resnet50_c cross-validation',
-    'Pytorch Resnet50_f cross-validation',
-    'Pytorch VGG11 cross-validation',
     'Pytorch UNIv2 cross-validation',
-    'Ludwig Resnet50_c',
+    'Ludwig UNIv2',
+    'Pytorch Resnet50_f cross-validation',
     'Ludwig Resnet50_f',
-    'Ludwig VGG11',
-    'Ludwig UNIv2'
+    'Pytorch Resnet50_c cross-validation',
+    'Ludwig Resnet50_c',
+    'Ludwig VGG11_f',
+    'Pytorch VGG11 cross-validation',
+    'Ludwig VGG11'
 ]
 
-# Metric arrays updated with new values
-loss = [0.8014, 0.5503, 0.9623, 1.0785, 1.0982, 0.6007, 1.1385, 1.9936]
-loss_ci_lower = [0.6932, 0.5208, 0.7394, 0.8674, None, None, None, None]
-loss_ci_upper = [0.9473, 0.5799, 2.9727, 1.2895, None, None, None, None]
+# Define the new order index mapping
+new_order = [3, 7, 1, 5, 0, 4, 8, 2, 6]
 
-accuracy = [0.5822, 0.7613, 0.5814, 0.7592, 0.5924, 0.7532, 0.6100, 0.7398]
-accuracy_ci_lower = [0.5669, 0.7361, 0.5550, 0.7424, None, None, None, None]
-accuracy_ci_upper = [0.6051, 0.7865, 0.6281, 0.7760, None, None, None, None]
+def reorder_list(lst, order):
+    return [lst[i] for i in order]
 
-precision = [0.5769, 0.7613, 0.5734, 0.8056, 0.6096, 0.8082, 0.6296, 0.7850]
-precision_ci_lower = [0.4560, 0.7361, 0.4608, 0.7907, None, None, None, None]
-precision_ci_upper = [0.6459, 0.7865, 0.6939, 0.8206, None, None, None, None]
+# Reorder all metric lists
+loss = reorder_list([1.0785, 1.9936, 0.5503, 0.6007, 0.8014, 1.0982, 1.1385, 0.9623, 1.1385], new_order)
+loss_ci_lower = reorder_list([0.8674, None, 0.5208, None, 0.6932, None, None, 0.7394, None], new_order)
+loss_ci_upper = reorder_list([1.2895, None, 0.5799, None, 0.9473, None, None, 2.9727, None], new_order)
 
-recall = [0.5558, 1.0000, 0.5450, 0.9019, 0.5039, 0.8931, 0.5258, 0.8859]
-recall_ci_lower = [0.4591, 1.0000, 0.4739, 0.8856, None, None, None, None]
-recall_ci_upper = [0.5986, 1.0000, 0.5938, 0.9182, None, None, None, None]
+accuracy = reorder_list([0.7592, 0.7398, 0.7613, 0.7532, 0.5822, 0.5924, 0.5377, 0.5814, 0.6100], new_order)
+accuracy_ci_lower = reorder_list([0.7424, None, 0.7361, None, 0.5669, None, None, 0.5550, None], new_order)
+accuracy_ci_upper = reorder_list([0.7760, None, 0.7865, None, 0.6051, None, None, 0.6281, None], new_order)
 
-roc_auc = [0.6238, 0.5000, 0.6241, 0.7057, 0.6435, 0.6571, 0.6597, 0.6930]
-roc_auc_ci_lower = [0.5797, 0.5000, 0.5911, 0.6625, None, None, None, None]
-roc_auc_ci_upper = [0.6579, 0.5000, 0.7104, 0.7490, None, None, None, None]
+precision = reorder_list([0.8056, 0.7850, 0.7613, 0.8082, 0.5769, 0.6096, 0.7585, 0.5734, 0.6296], new_order)
+precision_ci_lower = reorder_list([0.7907, None, 0.7361, None, 0.4560, None, None, 0.4608, None], new_order)
+precision_ci_upper = reorder_list([0.8206, None, 0.7865, None, 0.6459, None, None, 0.6939, None], new_order)
 
-specificity = [0.6164, 0.0000, 0.6228, 0.2996, 0.6801, 0.2739, 0.6934, 0.3454]
-specificity_ci_lower = [0.5913, 0.0000, 0.5613, 0.2537, None, None, None, None]
-specificity_ci_upper = [0.6501, 0.0000, 0.6998, 0.3455, None, None, None, None]
+recall = reorder_list([0.9019, 0.8859, 1.0000, 0.8931, 0.5558, 0.5039, 0.7953, 0.5450, 0.5258], new_order)
+recall_ci_lower = reorder_list([0.8856, None, 1.0000, None, 0.4591, None, None, 0.4739, None], new_order)
+recall_ci_upper = reorder_list([0.9182, None, 1.0000, None, 0.5986, None, None, 0.5938, None], new_order)
 
-f1_score = [0.5703, 0.8640, 0.5544, 0.8508, 0.5530, 0.8486, 0.5732, 0.8325]
-f1_score_ci_lower = [0.4591, 0.8477, 0.4896, 0.8397, None, None, None, None]
-f1_score_ci_upper = [0.6166, 0.8804, 0.6214, 0.8619, None, None, None, None]
+roc_auc = reorder_list([0.7057, 0.6930, 0.5000, 0.6571, 0.6238, 0.6435, 0.9264, 0.6241, 0.6597], new_order)
+roc_auc_ci_lower = reorder_list([0.6625, None, 0.5000, None, 0.5797, None, None, 0.5911, None], new_order)
+roc_auc_ci_upper = reorder_list([0.7490, None, 0.5000, None, 0.6579, None, None, 0.7104, None], new_order)
+
+specificity = reorder_list([0.2996, 0.3454, 0.0000, 0.2739, 0.6164, 0.6801, 0.6510, 0.6228, 0.6934], new_order)
+specificity_ci_lower = reorder_list([0.2537, None, 0.0000, None, 0.5913, None, None, 0.5613, None], new_order)
+specificity_ci_upper = reorder_list([0.3455, None, 0.0000, None, 0.6501, None, None, 0.6998, None], new_order)
+
+f1_score = reorder_list([0.8508, 0.8325, 0.8640, 0.8486, 0.5703, 0.5530, 0.5377, 0.5544, 0.5732], new_order)
+f1_score_ci_lower = reorder_list([0.8397, None, 0.8477, None, 0.4591, None, None, 0.4896, None], new_order)
+f1_score_ci_upper = reorder_list([0.8619, None, 0.8804, None, 0.6166, None, None, 0.6214, None], new_order)
 
 metrics = [accuracy, precision, recall, roc_auc, specificity, f1_score]
 metric_names = ['Accuracy', 'Precision', 'Recall', 'ROC-AUC', 'Specificity', 'F1-Score']
