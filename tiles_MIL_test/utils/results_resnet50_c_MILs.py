@@ -27,43 +27,43 @@ if len(sys.argv) != 2:
 filename = sys.argv[1]
 data = load_json_data(filename)
 
-# Extract data from JSON
+# Extract data from JSON, handling None values
 results = [entry['model'] for entry in data]
 metrics_dict = {
-    'loss': [entry['loss']['value'] for entry in data],
-    'accuracy': [entry['accuracy']['value'] for entry in data],
-    'precision': [entry['precision']['value'] for entry in data],
-    'recall': [entry['recall']['value'] for entry in data],
-    'roc_auc': [entry['roc_auc']['value'] for entry in data],
-    'specificity': [entry['specificity']['value'] for entry in data],
-    'f1_score': [entry['f1_score']['value'] for entry in data]
+    'loss': [entry['loss'].get('value') if entry.get('loss') else None for entry in data],
+    'accuracy': [entry['accuracy'].get('value') if entry.get('accuracy') else None for entry in data],
+    'precision': [entry['precision'].get('value') if entry.get('precision') else None for entry in data],
+    'recall': [entry['recall'].get('value') if entry.get('recall') else None for entry in data],
+    'roc_auc': [entry['roc_auc'].get('value') if entry.get('roc_auc') else None for entry in data],
+    'specificity': [entry['specificity'].get('value') if entry.get('specificity') else None for entry in data],
+    'f1_score': [entry['f1_score'].get('value') if entry.get('f1_score') else None for entry in data]
 }
 ci_lower_dict = {
-    'loss': [entry['loss']['ci_lower'] for entry in data],
-    'accuracy': [entry['accuracy']['ci_lower'] for entry in data],
-    'precision': [entry['precision']['ci_lower'] for entry in data],
-    'recall': [entry['recall']['ci_lower'] for entry in data],
-    'roc_auc': [entry['roc_auc']['ci_lower'] for entry in data],
-    'specificity': [entry['specificity']['ci_lower'] for entry in data],
-    'f1_score': [entry['f1_score']['ci_lower'] for entry in data]
+    'loss': [entry['loss'].get('ci_lower') if entry.get('loss') else None for entry in data],
+    'accuracy': [entry['accuracy'].get('ci_lower') if entry.get('accuracy') else None for entry in data],
+    'precision': [entry['precision'].get('ci_lower') if entry.get('precision') else None for entry in data],
+    'recall': [entry['recall'].get('ci_lower') if entry.get('recall') else None for entry in data],
+    'roc_auc': [entry['roc_auc'].get('ci_lower') if entry.get('roc_auc') else None for entry in data],
+    'specificity': [entry['specificity'].get('ci_lower') if entry.get('specificity') else None for entry in data],
+    'f1_score': [entry['f1_score'].get('ci_lower') if entry.get('f1_score') else None for entry in data]
 }
 ci_upper_dict = {
-    'loss': [entry['loss']['ci_upper'] for entry in data],
-    'accuracy': [entry['accuracy']['ci_upper'] for entry in data],
-    'precision': [entry['precision']['ci_upper'] for entry in data],
-    'recall': [entry['recall']['ci_upper'] for entry in data],
-    'roc_auc': [entry['roc_auc']['ci_upper'] for entry in data],
-    'specificity': [entry['specificity']['ci_upper'] for entry in data],
-    'f1_score': [entry['f1_score']['ci_upper'] for entry in data]
+    'loss': [entry['loss'].get('ci_upper') if entry.get('loss') else None for entry in data],
+    'accuracy': [entry['accuracy'].get('ci_upper') if entry.get('accuracy') else None for entry in data],
+    'precision': [entry['precision'].get('ci_upper') if entry.get('precision') else None for entry in data],
+    'recall': [entry['recall'].get('ci_upper') if entry.get('recall') else None for entry in data],
+    'roc_auc': [entry['roc_auc'].get('ci_upper') if entry.get('roc_auc') else None for entry in data],
+    'specificity': [entry['specificity'].get('ci_upper') if entry.get('specificity') else None for entry in data],
+    'f1_score': [entry['f1_score'].get('ci_upper') if entry.get('f1_score') else None for entry in data]
 }
 
 # Define metrics and names
-metrics = [metrics_dict['accuracy'], metrics_dict['precision'], metrics_dict['recall'], 
+metrics = [metrics_dict['accuracy'], metrics_dict['precision'], metrics_dict['recall'],
            metrics_dict['roc_auc'], metrics_dict['specificity'], metrics_dict['f1_score']]
 metric_names = ['Accuracy', 'Precision', 'Recall', 'ROC-AUC', 'Specificity', 'F1-Score']
-ci_lower = [ci_lower_dict['accuracy'], ci_lower_dict['precision'], ci_lower_dict['recall'], 
+ci_lower = [ci_lower_dict['accuracy'], ci_lower_dict['precision'], ci_lower_dict['recall'],
             ci_lower_dict['roc_auc'], ci_lower_dict['specificity'], ci_lower_dict['f1_score']]
-ci_upper = [ci_upper_dict['accuracy'], ci_upper_dict['precision'], ci_upper_dict['recall'], 
+ci_upper = [ci_upper_dict['accuracy'], ci_upper_dict['precision'], ci_upper_dict['recall'],
             ci_upper_dict['roc_auc'], ci_upper_dict['specificity'], ci_upper_dict['f1_score']]
 loss = metrics_dict['loss']
 loss_ci_lower = ci_lower_dict['loss']
@@ -84,19 +84,32 @@ n_metrics = len(metrics)
 # Plot performance metrics
 for i, (metric, name, color, lower, upper) in enumerate(zip(metrics, metric_names, colors, ci_lower, ci_upper)):
     offset = (i - n_metrics / 2) * bar_width
-    bars = ax1.bar(x + offset, metric, bar_width, label=name, color=color, edgecolor='white', linewidth=0.5)
-    yerr_lower = [m - l if l is not None else 0 for m, l in zip(metric, lower)]
-    yerr_upper = [u - m if u is not None else 0 for m, u in zip(metric, upper)]
+    # Filter out None values for plotting
+    valid_indices = [j for j, val in enumerate(metric) if val is not None]
+    metric_values = np.array(metric)[valid_indices]
+    lower_values = np.array(lower)[valid_indices]
+    upper_values = np.array(upper)[valid_indices]
+    x_offsets = x[valid_indices] + offset
+
+    bars = ax1.bar(x_offsets, metric_values, bar_width, label=name if i == 0 else "", color=color, edgecolor='white', linewidth=0.5)
+    yerr_lower = [m - l if l is not None else 0 for m, l in zip(metric_values, lower_values)]
+    yerr_upper = [u - m if u is not None else 0 for m, u in zip(metric_values, upper_values)]
     yerr = np.array([yerr_lower, yerr_upper])
-    ax1.errorbar(x + offset, metric, yerr=yerr, fmt='none', color='black', capsize=3, linewidth=1)
+    ax1.errorbar(x_offsets, metric_values, yerr=yerr, fmt='none', color='black', capsize=3, linewidth=1)
 
 # Plot loss
 loss_offset = (n_metrics / 2) * bar_width + bar_width * 0.5
-bars = ax2.bar(x + loss_offset, loss, bar_width, label='Loss', color=loss_color, edgecolor='white', linewidth=0.5)
-yerr_lower = [l - ll if ll is not None else 0 for l, ll in zip(loss, loss_ci_lower)]
-yerr_upper = [lu - l if lu is not None else 0 for l, lu in zip(loss, loss_ci_upper)]
-yerr = np.array([yerr_lower, yerr_upper])
-ax2.errorbar(x + loss_offset, loss, yerr=yerr, fmt='none', color='black', capsize=3, linewidth=1)
+valid_loss_indices = [j for j, val in enumerate(loss) if val is not None]
+loss_values = np.array(loss)[valid_loss_indices]
+loss_lower_values = np.array(loss_ci_lower)[valid_loss_indices]
+loss_upper_values = np.array(loss_ci_upper)[valid_loss_indices]
+x_loss_offsets = x[valid_loss_indices] + loss_offset
+
+bars = ax2.bar(x_loss_offsets, loss_values, bar_width, label='Loss', color=loss_color, edgecolor='white', linewidth=0.5)
+yerr_lower_loss = [l - ll if ll is not None else 0 for l, ll in zip(loss_values, loss_lower_values)]
+yerr_upper_loss = [lu - l if lu is not None else 0 for l, lu in zip(loss_values, loss_upper_values)]
+yerr_loss = np.array([yerr_lower_loss, yerr_upper_loss])
+ax2.errorbar(x_loss_offsets, loss_values, yerr=yerr_loss, fmt='none', color='black', capsize=3, linewidth=1)
 
 # Add threshold line
 ax1.axhline(y=0.7, color='red', linestyle=':', linewidth=1, label='Threshold 0.7')
@@ -108,7 +121,7 @@ ax2.set_ylabel('Loss', fontsize=12)
 ax1.set_xticks(x)
 ax1.set_xticklabels(results, fontsize=10, rotation=45, ha='right')
 ax1.set_ylim(0, 1.1)
-ax2.set_ylim(0, max(loss) * 1.2)  # Dynamically adjust loss y-axis based on max value
+ax2.set_ylim(0, max(v for v in loss if v is not None) * 1.2 if any(v is not None for v in loss) else 1.2) # Dynamically adjust loss y-axis
 
 ax1.grid(True, axis='y', linestyle='--', alpha=0.7)
 
