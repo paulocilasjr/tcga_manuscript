@@ -91,7 +91,7 @@ for i, (metric, name, color, lower, upper) in enumerate(zip(metrics, metric_name
     upper_values = np.array(upper)[valid_indices]
     x_offsets = x[valid_indices] + offset
 
-    bars = ax1.bar(x_offsets, metric_values, bar_width, label=name if i == 0 else "", color=color, edgecolor='white', linewidth=0.5)
+    bars = ax1.bar(x_offsets, metric_values, bar_width, label=name, color=color, edgecolor='white', linewidth=0.5)
     yerr_lower = [m - l if l is not None else 0 for m, l in zip(metric_values, lower_values)]
     yerr_upper = [u - m if u is not None else 0 for m, u in zip(metric_values, upper_values)]
     yerr = np.array([yerr_lower, yerr_upper])
@@ -105,7 +105,7 @@ loss_lower_values = np.array(loss_ci_lower)[valid_loss_indices]
 loss_upper_values = np.array(loss_ci_upper)[valid_loss_indices]
 x_loss_offsets = x[valid_loss_indices] + loss_offset
 
-bars = ax2.bar(x_loss_offsets, loss_values, bar_width, label='Loss', color=loss_color, edgecolor='white', linewidth=0.5)
+bars_loss = ax2.bar(x_loss_offsets, loss_values, bar_width, label='Loss', color=loss_color, edgecolor='white', linewidth=0.5)
 yerr_lower_loss = [l - ll if ll is not None else 0 for l, ll in zip(loss_values, loss_lower_values)]
 yerr_upper_loss = [lu - l if lu is not None else 0 for l, lu in zip(loss_values, loss_upper_values)]
 yerr_loss = np.array([yerr_lower_loss, yerr_upper_loss])
