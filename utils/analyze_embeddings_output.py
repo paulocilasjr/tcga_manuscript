@@ -1,93 +1,108 @@
+import os
+import sys
+from datetime import datetime
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import sys
-import os
-from datetime import datetime
+from collections import Counter
+from multiprocessing import Pool, cpu_count
 
-def analyze_csv(file_path: str):
-    """Analyze and visualize data from the embeddings CSV file."""
+def process_chunk(chunk_args):
+    """Process a single chunk of the CSV file and return aggregated results."""
+    chunk, usecols = chunk_args
+    # Clean and process chunk
+    chunk['sample_name'] = chunk['sample_name'].str.strip().str.lower()
+    chunk = chunk.dropna(subset=['sample_name'])
+
+    # Convert label to numeric, drop invalid rows
+    chunk['label'] = pd.to_numeric(chunk['label'].str.strip(), errors='coerce')
+    chunk = chunk.dropna(subset=['label']).astype({'label': int})
+
+    # Aggregate results
+    sample_counts = Counter(chunk['sample_name'])
+    label_counts = Counter(chunk['label'])
+    unique_samples = set(chunk['sample_name'])
+    tiles_per_sample = chunk.groupby('sample_name')['label'].first()  # First label per sample
+
+    return sample_counts, label_counts, unique_samples, tiles_per_sample.to_dict()
+
+def analyze_csv(file_path: str, chunk_size: int = 100000):
+    """Analyze and visualize data from the embeddings CSV file efficiently with parallel processing."""
 
     # Check if file exists
     if not os.path.isfile(file_path):
         print(f"Error: File '{file_path}' does not exist.", file=sys.stderr)
         sys.exit(1)
 
-    # Read CSV with proper encoding and space trimming
-    print(f"Reading CSV file: {file_path}", flush=True)
-    try:
-        df = pd.read_csv(file_path, dtype={'sample_name': str, 'label': str}, encoding='utf-8', skipinitialspace=True, delimiter=',')
-    except Exception as e:
-        print(f"Error: Failed to read CSV file: {e}", file=sys.stderr)
-        sys.exit(1)
+    # Only load required columns
+    usecols = ['sample_name', 'label']
+    print(f"Reading CSV file '{file_path}' in chunks of {chunk_size} rows with {cpu_count()} workers...", flush=True)
 
-    # Ensure required columns exist
-    required_columns = ['sample_name', 'label']
-    missing_columns = [col for col in required_columns if col not in df.columns]
-    if missing_columns:
-        print(f"Error: Missing required columns: {missing_columns}", file=sys.stderr)
-        sys.exit(1)
+    # Prepare for parallel processing
+    chunk_iterator = pd.read_csv(
+        file_path,
+        usecols=usecols,
+        dtype={'sample_name': str, 'label': str},
+        encoding='utf-8',
+        skipinitialspace=True,
+        delimiter=',',
+        chunksize=chunk_size
+    )
 
-    # 🔹 FIX: Ensure 'sample_name' has no leading/trailing spaces and is in correct format
-    df['sample_name'] = df['sample_name'].astype(str).str.strip()
+    # Use multiprocessing Pool to process chunks in parallel
+    total_rows = 0
+    sample_counts = Counter()
+    label_counts = Counter()
+    unique_samples = set()
+    tiles_per_sample_dict = {}
 
-    # Remove any NaN values in the 'sample_name' column before counting unique samples
-    rows_removed = df[df['sample_name'].isna()]  # Capture rows with NaN in 'sample_name'
-    if not rows_removed.empty:
-        print(f"DEBUG: Rows removed due to NaN 'sample_name':")
-        print(rows_removed)  # Print the rows that are being removed for debugging
-    df = df.dropna(subset=['sample_name'])
+    with Pool(processes=cpu_count()) as pool:
+        results = pool.map(process_chunk, [(chunk, usecols) for chunk in chunk_iterator])
 
-    # Optional: Normalize case sensitivity
-    df['sample_name'] = df['sample_name'].str.lower()
+    # Combine results from all chunks
+    for sc, lc, us, tps in results:
+        sample_counts.update(sc)
+        label_counts.update(lc)
+        unique_samples.update(us)
+        tiles_per_sample_dict.update(tps)  # Labels per sample
+        total_rows += sum(sc.values())
 
-    # 🔹 FIX: Convert 'label' column properly
-    df['label'] = df['label'].astype(str).str.strip()  # Remove spaces
-    df['label'] = pd.to_numeric(df['label'], errors='coerce')  # Convert to numeric (invalid -> NaN)
-    df = df.dropna(subset=['label'])  # Remove rows where label is NaN
-    df['label'] = df['label'].astype(int)  # Convert to integer
-
-    # Ensure all unique sample names are counted correctly
-    num_rows = len(df)
-    num_unique_samples = len(df['sample_name'].unique())
-    label_counts = df['label'].value_counts().reindex([0, 1], fill_value=0)  # Ensure both 0 and 1 are counted
-
-    print(f"DEBUG: Unique sample names: {num_unique_samples}", flush=True)  # Check final count
-    print(f"Number of rows: {num_rows}", flush=True)
-    print(f"Number of unique sample names: {num_unique_samples}", flush=True)
-    print(f"Count of label 0: {label_counts[0]}", flush=True)
-    print(f"Count of label 1: {label_counts[1]}", flush=True)
+    num_unique_samples = len(unique_samples)
+    print(f"Number of rows: {total_rows:,}", flush=True)
+    print(f"Number of unique sample names: {num_unique_samples:,}", flush=True)
+    print(f"Count of label 0: {label_counts[0]:,}", flush=True)
+    print(f"Count of label 1: {label_counts[1]:,}", flush=True)
 
     # Prepare output directory
     output_dir = "./analysis_outputs"
     os.makedirs(output_dir, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    # Figure 1: Bar plot of number of rows per sample
-    print("Generating bar plot of rows per sample...", flush=True)
-    sample_counts = df['sample_name'].value_counts()
+    # Figure 1: Histogram of bag sizes (tiles per sample)
+    print("Generating histogram of bag sizes...", flush=True)
+    bag_sizes = list(sample_counts.values())  # Bag size is the number of tiles per sample
     plt.figure(figsize=(12, 6))
-    sample_counts.plot(kind='bar')
-    plt.title('Number of Rows per Sample')
-    plt.xlabel('Sample Name')
-    plt.ylabel('Number of Rows')
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
-    bar_plot_file = os.path.join(output_dir, f"rows_per_sample_{timestamp}.png")
-    plt.savefig(bar_plot_file)
+    plt.hist(bag_sizes, bins=50, log=False)  # Removed log scale for standard frequency view
+    plt.title('Distribution of Bag Sizes')
+    plt.xlabel('Bag Size (Number of Tiles per Sample)')
+    plt.ylabel('Frequency')
+    plt.grid(True, linestyle='--', alpha=0.7)
+    hist_plot_file = os.path.join(output_dir, f"bag_size_distribution_{timestamp}.png")
+    plt.savefig(hist_plot_file)
     plt.close()
-    print(f"Bar plot saved to: {bar_plot_file}", flush=True)
+    print(f"Histogram saved to: {hist_plot_file}", flush=True)
 
-    # Figure 2: Boxplot of total tiles per sample by label
+    # Figure 2: Boxplot of tiles per sample by label (using full dataset)
     print("Generating boxplot of tiles per sample by label...", flush=True)
+    tiles_per_sample = pd.DataFrame({
+        'sample_name': list(sample_counts.keys()),
+        'tile_count': list(sample_counts.values())
+    })
+    tiles_per_sample['label'] = tiles_per_sample['sample_name'].map(tiles_per_sample_dict)
 
-    # Count tiles (rows) per sample and merge with labels
-    tiles_per_sample = df.groupby('sample_name').size().reset_index(name='tile_count')
-    sample_labels = df[['sample_name', 'label']].drop_duplicates()
-    tiles_df = pd.merge(tiles_per_sample, sample_labels, on='sample_name', how='left')
-
-    # Filter to only 0 and 1 labels (in case there are NaNs or unexpected values)
-    tiles_df = tiles_df[tiles_df['label'].isin([0, 1])]
+    # Filter to valid labels (0 and 1)
+    tiles_df = tiles_per_sample[tiles_per_sample['label'].isin([0, 1])]
 
     if tiles_df.empty:
         print("Warning: No samples with labels 0 or 1 for boxplot.", file=sys.stderr)
@@ -115,4 +130,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
