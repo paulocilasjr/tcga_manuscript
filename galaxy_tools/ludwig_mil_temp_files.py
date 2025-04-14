@@ -1,117 +1,81 @@
+"""
+A script for creating bags of instances from embeddings
+and metadata for Multiple Instance Learning (MIL) tasks.
+
+Processes embedding and metadata CSV files to generate
+bags of instances, saved as a single CSV file. Supports
+bagging strategies (by sample, in turns, or random),
+pooling methods, and options for balancing, preventing
+data leakage, and Ludwig formatting. Handles large
+datasets efficiently using temporary Parquet files,
+sequential processing, and multiprocessing.
+
+Dependencies:
+  - gc: For manual garbage collection to manage memory.
+  - argparse: For parsing command-line arguments.
+  - logging: For logging progress and errors.
+  - multiprocessing (mp): For parallel processing.
+  - os: For file operations and temporary file management.
+  - tempfile: For creating temporary files.
+  - numpy (np): For numerical operations and array.
+  - pandas (pd): For data manipulation and I/O (CSV, Parquet).
+  - torch: For tensor operations (attention pooling).
+  - torch.nn: For NN components (attention pooling).
+  - fastparquet: For reading and writing Parquet files.
+
+Key Features:
+  - Multiple bagging: by sample (`bag_by_sample`), in
+    turns (`bag_in_turns`), or random (`bag_random`).
+  - Various pooling methods (e.g., max, mean, attention).
+  - Prevents data leakage by splitting at sample level.
+  - Balances bags by label imbalance or truncating.
+  - Outputs in Ludwig format (whitespace-separated vectors).
+  - Efficient large dataset processing (temp Parquet,
+    sequential CSV write).
+  - GPU acceleration for certain pooling (e.g., attention).
+
+Usage:
+  Run the script from the command line with arguments:
+
+  ```bash
+  python ludwig_mil_temp.py --embeddings_csv <path_to_embeddings.csv>
+    --metadata_csv <path_to_metadata.csv> --bag_size <bag_size>
+    --pooling_method <method> --output_csv <output.csv>
+    [--split_proportions <train,val,test>] [--dataleak]
+    [--balance_enforced] [--by_sample <splits>] [--repeats <num>]
+    [--ludwig_format] [--random_seed <seed>]
+    [--imbalance_cap <percentage>] [--truncate_bags] [--use_gpu]
+"""
+
+
+import gc
 import argparse
-import csv
 import logging
 import multiprocessing as mp
 import os
 import tempfile
 
 import numpy as np
+
 import pandas as pd
+
 import torch
 import torch.nn as nn
 
-# LOAD DATA FUNCTIONS
-def load_metadata(file_path):
-    """Loads metadata from a CSV file."""
-    metadata = pd.read_csv(file_path)
-    logging.info("Metadata loaded with %d samples, cols: %s",
-                 len(metadata), list(metadata.columns))
-    logging.info("Unique samples: %d, labels: %d",
-                 metadata["sample_name"].nunique(),
-                 metadata["label"].nunique())
-    return metadata
-
-# SPLIT FUNCTIONS
-def str_array_split(split_proportions):
-    """Converts a string of split proportions to a list of floats."""
-    split_array = [float(p) for p in split_proportions.split(",")]
-    if len(split_array) == 2:
-        split_array.insert(1, 0.0)  # Insert validation proportion as 0 if only train and test are provided
-    elif len(split_array) != 3:
-        raise ValueError("split_proportions must have 2 or 3 values")
-    return split_array
+import fastparquet
 
 
-def split_sizes(num_samples, proportions):
-    """Calculates split sizes based on proportions, ensuring they sum to the total number of samples."""
-    sizes = [int(p * num_samples) for p in proportions]
-    total = sum(sizes)
-    if total < num_samples:
-        sizes[-1] += num_samples - total  # Add remaining samples to test
-    elif total > num_samples:
-        sizes[0] -= total - num_samples  # Remove excess from train
-    return sizes
-
-
-def split_data(metadata, split_proportions, dataleak=False, random_seed=None):
-    """
-    Splits data into train, validation, and test sets based on provided proportions.
-
-    Parameters:
-    - metadata: DataFrame containing sample information with a 'sample_name' column.
-    - split_proportions: String like '0.7,0.0,0.3' specifying train, validation, and test proportions.
-    - dataleak: Boolean flag (unused here, included for compatibility).
-    - random_seed: Optional integer to set random seed for reproducibility.
-
-    Returns:
-    - metadata: DataFrame with an added 'split' column (0 = train, 1 = validation, 2 = test).
-    """
-    if random_seed is not None:
-        np.random.seed(random_seed)
-
-    # Parse the split proportions
-    proportions = str_array_split(split_proportions)
-    train_prop, val_prop, test_prop = proportions
-
-    # Get unique samples
-    list_samples = metadata["sample_name"].unique()
-    num_samples = len(list_samples)
-
-    # Determine split assignments
-    if val_prop == 0 and test_prop == 0:
-        # Case 1: Both validation and test are 0, assign all to train
-        split_values = np.zeros(num_samples, dtype=int)
-    elif val_prop == 0:
-        # Case 2: Validation is 0, split between train and test
-        train_size = int(train_prop * num_samples)
-        test_size = num_samples - train_size
-        split_values = np.array([0] * train_size + [2] * test_size)
-    else:
-        # Case 3: Standard three-way split
-        sizes = split_sizes(num_samples, proportions)
-        split_values = np.concatenate([
-            np.zeros(sizes[0], dtype=int),      # train
-            np.ones(sizes[1], dtype=int),       # validation
-            2 * np.ones(sizes[2], dtype=int)    # test
-        ])
-
-    # Shuffle and assign splits to samples
-    shuffled_samples = np.random.permutation(list_samples)
-    split_series = pd.Series(split_values, index=shuffled_samples)
-    metadata["split"] = metadata["sample_name"].map(split_series)
-
-    # Log the resulting split sizes
-    train_size = sum(metadata["split"] == 0)
-    val_size = sum(metadata["split"] == 1)
-    test_size = sum(metadata["split"] == 2)
-    logging.info("Data split: train %d, val %d, test %d", train_size, val_size, test_size)
-
-    return metadata
-
-
-# BAG RELATED FUNCTIONS
-def parse_bag_size(value):
-    """Parses bag size string into min and max values."""
+def parse_bag_size(bag_size_str):
+    """Parses bag size string into a range or single value."""
     try:
-        if "-" in str(value):
-            min_val, max_val = map(int, str(value).split("-"))
-            if min_val > max_val:
-                raise ValueError("Invalid range: min > max")
-            return [min_val, max_val]
-        val = int(float(str(value)))
-        return [val, val]
-    except (ValueError, TypeError) as e:
-        raise ValueError(f"Invalid bag_size format: {value}, error: {e}")
+        if '-' in bag_size_str:
+            start, end = map(int, bag_size_str.split('-'))
+            return list(range(start, end + 1))
+        return [int(bag_size_str)]
+    except ValueError:
+        logging.error("Invalid bag_size format: %s", bag_size_str)
+        raise
+
 
 def parse_by_sample(value):
     """Parses by_sample string into a set of split values."""
@@ -124,21 +88,285 @@ def parse_by_sample(value):
             return None
         return splits
     except (ValueError, AttributeError):
-        logging.warning("Failed to parse by_sample: %s", value)
+        logging.warning("By_Sample not used")
         return None
+
+
+class BaggingConfig:
+    """Configuration class for bagging parameters."""
+
+    def __init__(self, params):
+        self.embeddings_csv = params.embeddings_csv
+        self.metadata_csv = params.metadata_csv
+        self.split_proportions = params.split_proportions
+        self.prevent_leakage = params.dataleak
+        self.balance_enforced = params.balance_enforced
+        self.bag_size = parse_bag_size(params.bag_size)
+        self.pooling_method = params.pooling_method
+        self.by_sample = parse_by_sample(params.by_sample)
+        self.repeats = params.repeats
+        self.ludwig_format = params.ludwig_format
+        self.output_csv = params.output_csv
+        self.random_seed = params.random_seed
+        self.imbalance_cap = params.imbalance_cap
+        self.truncate_bags = params.truncate_bags
+        self.use_gpu = params.use_gpu
+
+    def __str__(self):
+        """String representation of the config for logging."""
+        return (
+            f"embeddings_csv={self.embeddings_csv}, "
+            f"metadata_csv={self.metadata_csv}, "
+            f"split_proportions={self.split_proportions}, "
+            f"prevent_leakage={self.prevent_leakage}, "
+            f"balance_enforced={self.balance_enforced}, "
+            f"bag_size={self.bag_size}, "
+            f"pooling_method={self.pooling_method}, "
+            f"by_sample={self.by_sample}, "
+            f"repeats={self.repeats}, "
+            f"ludwig_format={self.ludwig_format}, "
+            f"output_csv={self.output_csv}, "
+            f"random_seed={self.random_seed}, "
+            f"imbalance_cap={self.imbalance_cap}, "
+            f"truncate_bags={self.truncate_bags}, "
+            f"use_gpu={self.use_gpu}"
+        )
+
+
+def set_random_seed(configs):
+    """Sets random seeds for reproducibility."""
+    np.random.seed(configs.random_seed)
+    torch.manual_seed(configs.random_seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(configs.random_seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+    logging.info("Random seed set to %d", configs.random_seed)
+
+
+def validate_metadata(metadata):
+    """Validates metadata for required columns."""
+    required_cols = {"sample_name", "label"}
+    if not required_cols.issubset(metadata.columns):
+        missing = required_cols - set(metadata.columns)
+        raise ValueError(f"Metadata missing columns: {missing}")
+    return metadata
+
+
+def load_metadata(file_path):
+    """Loads metadata from a CSV file."""
+    metadata = pd.read_csv(file_path)
+    validate_metadata(metadata)
+    logging.info("Metadata loaded with %d samples, cols: %s",
+                 len(metadata), list(metadata.columns))
+    logging.info("Unique samples: %d, labels: %d",
+                 metadata["sample_name"].nunique(),
+                 metadata["label"].nunique())
+    return metadata
+
+
+def convert_proportions(proportion_string):
+    """Converts a string of split proportions into a list of floats."""
+    proportion_list = [float(p) for p in proportion_string.split(",")]
+    print(proportion_list)
+    if len(proportion_list) == 2:
+        proportion_list = [proportion_list[0], 0.0, proportion_list[1]]
+
+    for proportion in proportion_list:
+        if proportion < 0 or proportion > 1:
+            raise ValueError("Each proportion must be between 0 and 1")
+
+    if abs(sum(proportion_list) - 1.0) > 1e-6:
+        raise ValueError("Proportions must sum to approximately 1.0")
+
+    return proportion_list
+
+
+def calculate_split_counts(total_samples, proportions):
+    """Calculates sample counts for each split."""
+    counts = [int(p * total_samples) for p in proportions]
+    calculated_total = sum(counts)
+    if calculated_total < total_samples:
+        counts[-1] += total_samples - calculated_total
+    elif calculated_total > total_samples:
+        counts[0] -= calculated_total - total_samples
+    return counts
+
+
+def assign_split_labels(proportions, sample_count):
+    """Assigns split labels based on proportions."""
+    proportion_values = convert_proportions(proportions)
+    train_fraction, val_fraction, test_fraction = proportion_values
+
+    if val_fraction == 0 and test_fraction == 0:
+        labels = np.zeros(sample_count, dtype=int)
+    elif val_fraction == 0:
+        train_size = int(train_fraction * sample_count)
+        test_size = sample_count - train_size
+        labels = np.array([0] * train_size + [2] * test_size)
+    else:
+        split_counts = calculate_split_counts(sample_count, proportion_values)
+        labels = np.concatenate([
+            np.zeros(split_counts[0], dtype=int),
+            np.ones(split_counts[1], dtype=int),
+            2 * np.ones(split_counts[2], dtype=int)
+        ])
+    return labels
+
+
+def split_dataset(metadata, configs):
+    """Splits dataset into train, val, test sets if prevent_leakage is True."""
+    if configs.prevent_leakage:
+        logging.info("No data leakage allowed")
+        unique_samples = metadata["sample_name"].unique()
+        sample_count = len(unique_samples)
+        split_labels = assign_split_labels(configs.split_proportions,
+                                           sample_count)
+        shuffled_samples = np.random.permutation(unique_samples)
+        label_series = pd.Series(split_labels, index=shuffled_samples)
+        metadata["split"] = metadata["sample_name"].map(label_series)
+        train_count = (metadata["split"] == 0).sum()
+        val_count = (metadata["split"] == 1).sum()
+        test_count = (metadata["split"] == 2).sum()
+        logging.info("Dataset split: train %d, val %d, test %d",
+                     train_count, val_count, test_count)
+    else:
+        logging.info("Data leakage allowed setup")
+    return metadata
+
+
+def assign_chunk_splits(chunk, split_counts, current_counts):
+    """Assigns split labels to a chunk of embeddings."""
+    chunk_size = len(chunk)
+    remaining = {
+        0: split_counts[0] - current_counts[0],
+        1: split_counts[1] - current_counts[1],
+        2: split_counts[2] - current_counts[2]
+    }
+    available_splits = [s for s, count in remaining.items() if count > 0]
+    if not available_splits:
+        return chunk, current_counts
+
+    total_remaining = sum(remaining.values())
+    assign_count = min(chunk_size, total_remaining)
+    if assign_count == 0:
+        return chunk, current_counts
+
+    weights = [remaining[s] / total_remaining for s in available_splits]
+    splits = np.random.choice(available_splits, size=assign_count, p=weights)
+    chunk["split"] = pd.Series(splits, index=chunk.index[:assign_count])
+    chunk["split"] = chunk["split"].fillna(0).astype(int)
+
+    for split in available_splits:
+        current_counts[split] += np.sum(splits == split)
+
+    return chunk, current_counts
+
+
+def setup_temp_files():
+    """Sets up temporary Parquet files for splits and bag outputs."""
+    splits = [0, 1, 2]
+    split_files = {}
+    for split in splits:
+        fd, path = tempfile.mkstemp(prefix=f"split_{split}_",
+                                    suffix=".parquet",
+                                    dir=os.getcwd())
+        os.close(fd)  # Explicitly close the file descriptor
+        split_files[split] = path
+
+    bag_outputs = {}
+    for split in splits:
+        fd, path = tempfile.mkstemp(prefix=f"MIL_bags_{split}_",
+                                    suffix=".parquet",
+                                    dir=os.getcwd())
+        os.close(fd)  # Explicitly close the file descriptor
+        bag_outputs[split] = path
+
+    return split_files, bag_outputs
+
+
+def distribute_embeddings(configs, metadata, split_files):
+    """Distributes embeddings to Parquet split files, merging metadata."""
+    embeddings_path = configs.embeddings_csv
+    proportion_string = configs.split_proportions
+    prevent_leakage = configs.prevent_leakage
+
+    logging.info("Distributing embeddings from %s to Parquet files",
+                 embeddings_path)
+    buffer_size = 50000
+    merged_header = None
+    non_sample_columns = None
+
+    if not prevent_leakage:
+        logging.warning("Counting rows in %s; may be slow for large files", embeddings_path)
+        total_rows = sum(1 for _ in open(embeddings_path)) - 1
+        proportions = convert_proportions(proportion_string)
+        split_counts = calculate_split_counts(total_rows, proportions)
+        current_counts = {0: 0, 1: 0, 2: 0}
+    else:
+        sample_to_split = dict(zip(metadata["sample_name"], metadata["split"]))
+        sample_to_label = dict(zip(metadata["sample_name"], metadata["label"]))
+
+    # Use a dictionary to track if the file for a given split has been written to before.
+    first_write = {split: True for split in split_files}
+
+    try:
+        first_header_read = True  # Only used to determine header info from the first chunk.
+        for chunk in pd.read_csv(embeddings_path, chunksize=buffer_size):
+            if first_header_read:
+                orig_header = list(chunk.columns)
+                non_sample_columns = [
+                    col for col in orig_header if col != "sample_name"
+                ]
+                merged_header = ["sample_name", "label"] + non_sample_columns
+                logging.info("Merged header: %s", merged_header)
+                first_header_read = False
+
+            if prevent_leakage:
+                chunk["split"] = chunk["sample_name"].map(sample_to_split)
+                chunk["label"] = chunk["sample_name"].map(sample_to_label)
+            else:
+                chunk, current_counts = assign_chunk_splits(chunk,
+                                                            split_counts,
+                                                            current_counts)
+                chunk = chunk.merge(metadata[["sample_name", "label"]],
+                                    on="sample_name",
+                                    how="left")
+
+            # Drop any rows where split or label information is missing.
+            chunk = chunk.dropna(subset=["split", "label"])
+            # Save each split to its corresponding temporary file.
+            for split in split_files:
+                split_chunk = chunk[chunk["split"] == split]
+                if not split_chunk.empty:
+                    temp_file = split_files[split]
+                    split_chunk[merged_header].to_parquet(
+                        temp_file,
+                        engine="fastparquet",
+                        append=not first_write[split],
+                        index=False
+                    )
+                    # Mark that we've written data for this split.
+                    first_write[split] = False
+            del chunk
+            gc.collect()
+
+    except Exception as e:
+        logging.error("Error distributing embeddings to Parquet: %s", e)
+        raise
 
 
 def aggregate_embeddings(embeddings, pooling_method, use_gpu=False):
     # Convert embeddings to a float32 array explicitly.
     embeddings = np.asarray(embeddings, dtype=np.float32)
-    
+
     if embeddings.ndim == 1:
         embeddings = embeddings.reshape(1, -1)
     elif embeddings.ndim == 0:
         embeddings = embeddings.reshape(1, 1)
-    
+
     logging.debug("Aggregating embeddings with shape: %s", embeddings.shape)
-    
+
     if pooling_method == "max_pooling":
         result = np.max(embeddings, axis=0)
     elif pooling_method == "mean_pooling":
@@ -176,551 +404,1106 @@ def aggregate_embeddings(embeddings, pooling_method, use_gpu=False):
     return result
 
 
-def bag_by_sample_process(group, pooling_method, bag_size, use_gpu):
-    """Processes bags by sample."""
-    embeddings = group.drop(columns=["sample_name", "label", "split"]).values
-    logging.debug("Embeddings shape for sample %s: %s", group["sample_name"].iloc[0], embeddings.shape)
-    sample_names = group["sample_name"].values
-    labels = group["label"].values
-    split = group["split"].iloc[0]
-    num_instances = len(group)
-    min_bag_size, max_bag_size = bag_size
-    random_bag_size = np.random.randint(min_bag_size, max_bag_size + 1)
-    num_bags = (num_instances + random_bag_size - 1) // random_bag_size
+def bag_by_sample(df, split, bag_file, config, batch_size=100,
+                  fixed_target_bags=None):
+    """
+    Processes the provided DataFrame by grouping rows by sample,
+    constructs bags from each sample group using the configured bag_size,
+    and writes the bag rows directly to bag_file (a Parquet file) in batches.
 
-    logging.info("Sample %s: %d instances, %d bags",
-                 group["sample_name"].iloc[0], num_instances, num_bags)
+    Args:
+        df (pd.DataFrame): The DataFrame containing the data.
+        split (str): The split identifier (e.g., 'train', 'val').
+        bag_file (str): The path to the Parquet file to write the bags.
+        config (object): Configuration object with bag_size, pooling_method, etc.
+        batch_size (int, optional): The number of rows to write in each batch. Defaults to 100.
+        fixed_target_bags (tuple, optional): (target_label, num_bags) to generate bags only for target_label.
 
-    bags = []
-    for i in range(num_bags):
-        start_idx = i * random_bag_size
-        end_idx = min(start_idx + random_bag_size, num_instances)
-        bag_embeddings = embeddings[start_idx:end_idx]
-        bag_sample_names = sample_names[start_idx:end_idx]
-        bag_labels = labels[start_idx:end_idx]
-        aggregated_embeddings = aggregate_embeddings(bag_embeddings, pooling_method, use_gpu)
-        logging.debug("Bag embedding shape in by_sample: %s", aggregated_embeddings.shape)
-        bag_label = int(any(bag_labels == 1))
-        bags.append({
-            "bag_label": bag_label,
-            "split": split,
-            "bag_size": len(bag_sample_names),
-            "bag_samples": list(bag_sample_names),
-            "embedding": aggregated_embeddings,
-        })
-    logging.info("Created %d bags for sample: %s",
-                 len(bags), group["sample_name"].iloc[0])
-    return bags
+    Output row format:
+        sample_name, bag_label, split, bag_size, vector_0, vector_1, ..., vector_N
+    """
+    log_msg = f"Processing by sample for split: {split}"
+    if fixed_target_bags:
+        log_msg += f" with fixed target {fixed_target_bags}"
+    logging.info(log_msg)
 
-def bag_turns_process(df_np, bag_sizes, pooling_method, use_gpu,
-                      target_label=None, target_count=None):
-    """Processes bags by turns."""
-    indices_0 = np.where(df_np[:, 1] == 0)[0]
-    indices_1 = np.where(df_np[:, 1] == 1)[0]
-    np.random.shuffle(indices_0)
-    np.random.shuffle(indices_1)
-    bags = []
-    bag_set = set()
+    batch_rows = []
     bag_count = 0
-    min_bag_size, max_bag_size = bag_sizes
+    vector_columns = [
+        col for col in df.columns
+        if col not in ["sample_name", "label", "split"]
+    ]
 
-    while (len(indices_0) > 0 or len(indices_1) > 0) and \
-          (target_count is None or bag_count < target_count):
-        bag_size = np.random.randint(min_bag_size, max_bag_size + 1)
-        if target_label == 0:
-            num_0_samples = min(bag_size, len(indices_0))
-            selected_indices = indices_0[:num_0_samples]
-            indices_0 = indices_0[num_0_samples:]
-        elif target_label == 1:
-            num_1_samples = min(bag_size, len(indices_1))
-            selected_indices = indices_1[:num_1_samples]
-            indices_1 = indices_1[num_1_samples:]
-        else:
-            if len(indices_0) == 0:
-                num_1_samples = min(bag_size, len(indices_1))
-                selected_indices = indices_1[:num_1_samples]
-                indices_1 = indices_1[num_1_samples:]
-            elif len(indices_1) == 0:
-                num_0_samples = min(bag_size, len(indices_0))
-                selected_indices = indices_0[:num_0_samples]
-                indices_0 = indices_0[num_0_samples:]
-            else:
-                num_1_samples = min(np.random.randint(1, bag_size + 1),
-                                    len(indices_1))
-                selected_indices_1 = indices_1[:num_1_samples]
-                indices_1 = indices_1[num_1_samples:]
-                num_0_samples = min(bag_size - num_1_samples, len(indices_0))
-                selected_indices_0 = indices_0[:num_0_samples]
-                indices_0 = indices_0[num_0_samples:]
-                selected_indices = np.concatenate([selected_indices_0,
-                                                   selected_indices_1])
+    if fixed_target_bags is not None:
+        target_label, target_needed = fixed_target_bags
+        target_samples = list(
+            df[df["label"] == target_label]["sample_name"].unique()
+        )
+        df = df[df["sample_name"].isin(target_samples)]
 
-        bag_data = df_np[selected_indices]
-        if len(bag_data) > 0:
-            only_embeddings = bag_data[:, 3:]
+        if df.empty:
+            logging.warning(
+                "No samples available for target label %d in split %s",
+                target_label,
+                split
+            )
+            return
+
+        available_samples = target_samples.copy()  # Now a list
+        np.random.shuffle(available_samples)       # Shuffles the list in place
+
+        while bag_count < target_needed:
+            if len(available_samples) == 0:
+                available_samples = target_samples.copy()  # Reset as a list
+                np.random.shuffle(available_samples)
+                logging.info(
+                    "Reusing samples for target label %d in split %s",
+                    target_label,
+                    split
+                )
+
+            sample_name = available_samples.pop()
+            group = df[df["sample_name"] == sample_name]
+            embeddings = group[vector_columns].values
+            num_instances = len(group)
+
+            current_bag_size = config.bag_size[0] \
+                if len(config.bag_size) == 1 else \
+                np.random.randint(config.bag_size[0], config.bag_size[1] + 1)
+            current_bag_size = min(current_bag_size, num_instances)
+
+            selected = group.sample(n=current_bag_size, replace=True)
+            bag_embeddings = selected[vector_columns].values
+
             aggregated_embedding = aggregate_embeddings(
-                only_embeddings, pooling_method, use_gpu)
-            logging.debug("Bag embedding shape in turns: %s", aggregated_embedding.shape)
-            bag_label = int(any(bag_data[:, 1] == 1))
-            bag_key = (tuple(map(tuple, only_embeddings)),
-                       len(bag_data), tuple(bag_data[:, 0]))
-            if bag_key not in bag_set:
-                bag_set.add(bag_key)
-                bags.append({
-                    "bag_label": bag_label,
-                    "split": bag_data[0, 2],
-                    "bag_size": len(bag_data),
-                    "bag_samples": list(bag_data[:, 0]),
-                    "embedding": aggregated_embedding
-                })
-                bag_count += 1
-    logging.info("Created %d bags for split: %d", len(bags), df_np[0, 2])
-    return bags
+                bag_embeddings,
+                config.pooling_method,
+                config.use_gpu
+            )
 
-def bag_random_process(df_np, bag_sizes, pooling_method, use_gpu,
-                       target_label=None, target_count=None):
-    """Processes bags randomly."""
-    np.random.shuffle(df_np)
-    min_bag_size, max_bag_size = bag_sizes
-    bags = []
-    bag_set = set()
-    bag_count = 0
-    idx = 0
+            bag_label = int(any(selected["label"] == 1))
+            if bag_label != target_label:
+                logging.warning(
+                    "Generated bag for target %d but got label %d",
+                    target_label, bag_label
+                )
+                continue
 
-    while idx < len(df_np) and (target_count is None or
-                                bag_count < target_count):
-        bag_size = np.random.randint(min_bag_size, max_bag_size + 1)
-        end_idx = min(idx + bag_size, len(df_np))
-        bag_data = df_np[idx:end_idx]
-        only_embeddings = bag_data[:, 3:]
-        aggregated_embedding = aggregate_embeddings(
-            only_embeddings, pooling_method, use_gpu)
-        logging.debug("Bag embedding shape in random: %s", aggregated_embedding.shape)
-        bag_label = int(any(bag_data[:, 1] == 1))
-        if target_label is not None and bag_label != target_label:
-            idx = end_idx
-            continue
-        bag_key = (tuple(map(tuple, only_embeddings)),
-                   len(bag_data), tuple(bag_data[:, 0]))
-        if bag_key not in bag_set:
-            bag_set.add(bag_key)
-            bags.append({
+            row = {
+                "sample_name": sample_name,
                 "bag_label": bag_label,
-                "split": bag_data[0, 2],
-                "bag_size": len(bag_data),
-                "bag_samples": list(bag_data[:, 0]),
-                "embedding": aggregated_embedding
-            })
+                "split": split,
+                "bag_size": current_bag_size
+            }
+            for j, val in enumerate(aggregated_embedding):
+                row[f"vector_{j}"] = val
+
+            batch_rows.append(row)
             bag_count += 1
-        idx = end_idx
 
-    logging.info("Created %d bags for split: %d", len(bags), df_np[0, 2])
-    return bags
+            if len(batch_rows) >= batch_size:
+                df_batch = pd.DataFrame(batch_rows)
+                # Check if the file has data to determine append mode
+                append_mode = os.path.getsize(bag_file) > 0
+                df_batch.to_parquet(
+                    bag_file,
+                    engine="fastparquet",
+                    append=append_mode,
+                    index=False
+                )
+                logging.debug(
+                    "Fixed mode: Wrote batch of %d rows to %s",
+                    len(batch_rows),
+                    bag_file
+                )
+                batch_rows = []
+                del df_batch
+                gc.collect()
+
+    else:
+        # Standard mode: process all samples
+        groups = df.groupby("sample_name")
+        for sample_name, group in groups:
+            embeddings = group[vector_columns].values
+            labels = group["label"].values
+            num_instances = len(group)
+
+            current_bag_size = config.bag_size[0] \
+                if len(config.bag_size) == 1 else \
+                np.random.randint(
+                config.bag_size[0],
+                config.bag_size[1] + 1
+            )
+            num_bags = (
+                num_instances + current_bag_size - 1
+            ) // current_bag_size
+            logging.info(
+                "Sample %s: %d instances, creating %d bags (bag size %d)",
+                sample_name,
+                num_instances,
+                num_bags,
+                current_bag_size
+            )
+
+            for i in range(num_bags):
+                start_idx = i * current_bag_size
+                end_idx = min(start_idx + current_bag_size, num_instances)
+                bag_embeddings = embeddings[start_idx:end_idx]
+                bag_labels = labels[start_idx:end_idx]
+
+                aggregated_embedding = aggregate_embeddings(
+                    bag_embeddings,
+                    config.pooling_method,
+                    config.use_gpu
+                )
+                bag_label = int(any(bag_labels == 1))
+
+                row = {
+                    "sample_name": sample_name,
+                    "bag_label": bag_label,
+                    "split": split,
+                    "bag_size": end_idx - start_idx
+                }
+                for j, val in enumerate(aggregated_embedding):
+                    row[f"vector_{j}"] = val
+
+                batch_rows.append(row)
+                bag_count += 1
+
+                if len(batch_rows) >= batch_size:
+                    df_batch = pd.DataFrame(batch_rows)
+                    # Check if the file has data to determine append mode
+                    append_mode = os.path.getsize(bag_file) > 0
+                    df_batch.to_parquet(
+                        bag_file,
+                        engine="fastparquet",
+                        append=append_mode,
+                        index=False
+                    )
+                    logging.debug(
+                        "Wrote batch of %d rows to %s",
+                        len(batch_rows),
+                        bag_file
+                    )
+                    batch_rows = []
+                    del df_batch
+                    gc.collect()
+
+    # Write any remaining rows
+    if batch_rows:
+        df_batch = pd.DataFrame(batch_rows)
+        append_mode = os.path.getsize(bag_file) > 0
+        df_batch.to_parquet(
+            bag_file,
+            engine="fastparquet",
+            append=append_mode,
+            index=False
+        )
+        logging.debug(
+            "Wrote final batch of %d rows to %s",
+            len(batch_rows),
+            bag_file
+        )
+        del df_batch
+        gc.collect()
+
+    logging.info("Created %d bags for split: %s", bag_count, split)
 
 
-def write_csv(output_csv, list_embeddings, chunk_size=10000,
-              append=False, ludwig_format=False):
-    """Writes bags to a CSV file."""
-    mode = "a" if append and os.path.exists(output_csv) else "w"
+def bag_in_turns(df, split, bag_file, config, batch_size=500,
+                 fixed_target_bags=None, allow_reuse=True):
+    """
+    Generate bags of instances from a DataFrame, with optional
+    fixed-target mode, data reuse, and enhanced diversity.
+
+    Parameters:
+    - df (pd.DataFrame): Input DataFrame with columns including
+      'sample_name', 'label', 'split', and embedding vectors.
+    - split (str): Dataset split (e.g., 'train', 'test').
+    - bag_file (str): Path to save the output Parquet file.
+    - config (object): Configuration object with attributes
+      'bag_size', 'pooling_method', and 'use_gpu'.
+    - batch_size (int): Number of bags to process before writing
+      to file (default: 500).
+    - fixed_target_bags (tuple): Optional (label, num_bags) to
+      generate bags for a specific label (e.g., (0, 100)).
+    - allow_reuse (bool): Allow resampling instances with
+      replacement if True (default: True).
+
+    Returns:
+    - None: Saves bags to the specified Parquet file.
+    """
+    logging.info(
+        "Processing bag in turns for split %s%s",
+        split,
+        (" with fixed target " + str(fixed_target_bags))
+        if fixed_target_bags is not None else ""
+    )
+
+    # Identify embedding columns (exclude non-vector columns).
+    vector_columns = [
+        col for col in df.columns
+        if col not in ["sample_name", "label", "split"]
+    ]
+
+    # Convert the DataFrame to a NumPy array for faster processing.
+    df_np = df.to_numpy()
+
+    # Determine bag size range from config.
+    if len(config.bag_size) == 1:
+        bag_min = bag_max = config.bag_size[0]
+    else:
+        bag_min, bag_max = config.bag_size
+
+    batch_rows = []
+    bag_count = 0
+
+    if fixed_target_bags is not None:
+        # Fixed-target mode: generate bags for a specific label.
+        target, target_needed = fixed_target_bags  # e.g., (0, 100)
+        if target == 0:
+            # Optimize for target label 0: remove all label 1 instances
+            indices = np.where(df_np[:, 1] == 0)[0]
+            logging.info(
+                "Fixed mode: target label 0, using only label 0 instances, \
+                total available %d rows",
+                len(indices)
+            )
+        else:
+            # For target label 1, use all instances to allow mixing
+            indices = np.arange(len(df_np))
+            logging.info(
+                "Fixed mode: target label 1, using all instances, \
+                total available %d rows",
+                len(indices)
+            )
+
+        total_available = len(indices)
+
+        while bag_count < target_needed:
+            current_bag_size = np.random.randint(bag_min, bag_max + 1) \
+                if bag_min != bag_max else bag_min
+
+            if total_available < current_bag_size and not allow_reuse:
+                logging.warning(
+                    "Not enough instances (%d) for bag size %d and \
+                    target label %d",
+                    total_available, current_bag_size, target
+                )
+                break
+
+            # Sample instances
+            selected = np.random.choice(
+                indices,
+                size=current_bag_size,
+                replace=allow_reuse
+            )
+            bag_data = df_np[selected]
+
+            if target == 1:
+                # For positive bags, ensure at least one instance has label 1
+                if not np.any(bag_data[:, 1] == 1):
+                    continue  # Skip if no positive instance
+                bag_label = 1
+            else:
+                # For negative bags, all instances are label 0 due to filtering
+                bag_label = 0
+
+            # Aggregate embeddings.
+            vec_col_indices = [
+                df.columns.get_loc(col) for col in vector_columns
+            ]
+            embeddings = bag_data[:, vec_col_indices].astype(np.float32)
+            aggregated_embedding = aggregate_embeddings(
+                embeddings,
+                config.pooling_method,
+                config.use_gpu
+            )
+
+            # Set bag metadata.
+            bsize = bag_data.shape[0]
+            samples = np.unique(bag_data[:, 0])
+            merged_sample_name = ",".join(map(str, samples))
+
+            # Create row for the bag.
+            row = {
+                "sample_name": merged_sample_name,
+                "bag_label": bag_label,
+                "split": split,
+                "bag_size": bsize
+            }
+            for j, val in enumerate(aggregated_embedding):
+                row[f"vector_{j}"] = val
+
+            batch_rows.append(row)
+            bag_count += 1
+
+            if len(batch_rows) >= batch_size:
+                df_batch = pd.DataFrame(batch_rows)
+                df_batch.to_parquet(
+                    bag_file,
+                    engine="fastparquet",
+                    append=True,
+                    index=False
+                )
+                logging.debug(
+                    "Fixed mode: Wrote a batch of %d rows to %s",
+                    len(batch_rows),
+                    bag_file
+                )
+                batch_rows = []
+                del df_batch
+                gc.collect()
+
+        # Write any remaining rows.
+        if batch_rows:
+            df_batch = pd.DataFrame(batch_rows)
+            df_batch.to_parquet(
+                bag_file,
+                engine="fastparquet",
+                append=True,
+                index=False
+            )
+            logging.debug(
+                "Wrote the final batch of %d rows to %s",
+                len(batch_rows),
+                bag_file
+            )
+            del df_batch
+            gc.collect()
+
+        logging.info("Created %d bags for split: %s", bag_count, split)
+
+    else:
+        # Alternating mode: alternate between labels 0 and 1.
+        indices_0 = np.where(df_np[:, 1] == 0)[0]
+        indices_1 = np.where(df_np[:, 1] == 1)[0]
+        np.random.shuffle(indices_0)
+        np.random.shuffle(indices_1)
+        turn = 0  # 0: label 0, 1: label 1.
+
+        while len(indices_0) > 0 or len(indices_1) > 0:
+            current_bag_size = np.random.randint(bag_min, bag_max + 1) \
+                if bag_min != bag_max else bag_min
+
+            if turn == 0:
+                if len(indices_0) > 0:
+                    num_to_select = min(current_bag_size, len(indices_0))
+                    selected = indices_0[:num_to_select]
+                    indices_0 = indices_0[num_to_select:]
+                else:
+                    if len(indices_1) == 0:
+                        break
+                    num_to_select = min(current_bag_size, len(indices_1))
+                    selected = indices_1[:num_to_select]
+                    indices_1 = indices_1[num_to_select:]
+            else:
+                if len(indices_1) > 0:
+                    num_to_select = min(current_bag_size, len(indices_1))
+                    selected = indices_1[:num_to_select]
+                    indices_1 = indices_1[num_to_select:]
+                else:
+                    if len(indices_0) == 0:
+                        break
+                    num_to_select = min(current_bag_size, len(indices_0))
+                    selected = indices_0[:num_to_select]
+                    indices_0 = indices_0[num_to_select:]
+
+            bag_data = df_np[selected]
+            if bag_data.shape[0] == 0:
+                break
+
+            # Aggregate embeddings.
+            vec_col_indices = [df.columns.get_loc(col) for col in vector_columns]
+            embeddings = bag_data[:, vec_col_indices].astype(np.float32)
+            aggregated_embedding = aggregate_embeddings(
+                embeddings,
+                config.pooling_method,
+                config.use_gpu
+            )
+
+            # Set bag label and metadata.
+            bag_label = int(np.any(bag_data[:, 1] == 1))
+            bsize = bag_data.shape[0]
+            samples = np.unique(bag_data[:, 0])
+            merged_sample_name = ",".join(map(str, samples))
+
+            # Create row for the bag.
+            row = {
+                "sample_name": merged_sample_name,
+                "bag_label": bag_label,
+                "split": split,
+                "bag_size": bsize
+            }
+            for j, val in enumerate(aggregated_embedding):
+                row[f"vector_{j}"] = val
+
+            batch_rows.append(row)
+            bag_count += 1
+            turn = 1 - turn
+
+            # Write batch to file if batch_size is reached.
+            if len(batch_rows) >= batch_size:
+                df_batch = pd.DataFrame(batch_rows)
+                df_batch.to_parquet(
+                    bag_file,
+                    engine="fastparquet",
+                    append=(bag_count > len(batch_rows)),
+                    index=False
+                )
+                logging.debug(
+                    "Alternating mode: Wrote a batch of %d rows to %s",
+                    len(batch_rows),
+                    bag_file
+                )
+                batch_rows = []
+                del df_batch
+                gc.collect()
+
+        # Write any remaining rows.
+        if batch_rows:
+            df_batch = pd.DataFrame(batch_rows)
+            df_batch.to_parquet(
+                bag_file,
+                engine="fastparquet",
+                append=(bag_count > len(batch_rows)),
+                index=False
+            )
+            logging.debug(
+                "Wrote the final batch of %d rows to %s",
+                len(batch_rows),
+                bag_file
+            )
+            del df_batch
+            gc.collect()
+
+        logging.info("Created %d bags for split: %s", bag_count, split)
+
+
+def bag_random(df, split, bag_file, configs, batch_size=500):
+    """
+    Processes the provided DataFrame by randomly selecting instances
+    to create bags.
+    """
+    logging.info("Processing bag randomly for split %s", split)
+
+    # Identify vector columns (exclude non-vector columns).
+    vector_columns = [
+        col for col in df.columns
+        if col not in ["sample_name", "label", "split"]
+    ]
+
+    df_np = df.to_numpy()
+
+    # Create an array of all row indices and shuffle them.
+    indices = np.arange(df.shape[0])
+    np.random.shuffle(indices)
+
+    bag_count = 0
+    batch_rows = []
+
+    # Determine bag size parameters.
+    if len(configs.bag_size) == 1:
+        bag_min = bag_max = configs.bag_size[0]
+    else:
+        bag_min, bag_max = configs.bag_size
+
+    pos = 0
+    total_rows = len(indices)
+
+    # Process until all indices have been used.
+    while pos < total_rows:
+        # Ensuring we do not exceed remaining rows.
+        current_bag_size = (np.random.randint(bag_min, bag_max + 1)
+                            if bag_min != bag_max else bag_min)
+        current_bag_size = min(current_bag_size, total_rows - pos)
+
+        # Select the indices for this bag.
+        selected = indices[pos: pos + current_bag_size]
+        pos += current_bag_size
+
+        # Extract the bag data.
+        bag_data = df_np[selected]
+        if bag_data.shape[0] == 0:
+            break
+
+        # Identify the positions of the vector columns using the column names.
+        vec_col_indices = [df.columns.get_loc(col) for col in vector_columns]
+        embeddings = bag_data[:, vec_col_indices].astype(np.float32)
+        aggregated_embedding = aggregate_embeddings(
+            embeddings,
+            configs.pooling_method,
+            configs.use_gpu
+        )
+
+        # Determine bag_label: 1 if any instance in this bag has label == 1.
+        bag_label = int(np.any(bag_data[:, 1] == 1))
+
+        # Merge all sample names from the bag (unique names, comma-separated).
+        samples = np.unique(bag_data[:, 0])
+        merged_sample_name = ",".join(map(str, samples))
+
+        # Use the provided split value.
+        bag_split = split
+        bsize = bag_data.shape[0]
+
+        # Build the output row with header fields:
+        # sample_name, bag_label, split, bag_size, then embeddings.
+        row = {
+            "sample_name": merged_sample_name,
+            "bag_label": bag_label,
+            "split": bag_split,
+            "bag_size": bsize
+        }
+        for j, val in enumerate(aggregated_embedding):
+            row[f"vector_{j}"] = val
+
+        batch_rows.append(row)
+        bag_count += 1
+
+        # Write out rows in batches.
+        if len(batch_rows) >= batch_size:
+            df_batch = pd.DataFrame(batch_rows)
+            # For the first batch,
+            # append=False (header written),
+            # then append=True on subsequent batches.
+            df_batch.to_parquet(
+                bag_file,
+                engine="fastparquet",
+                append=(bag_count > len(batch_rows)),
+                index=False
+            )
+            logging.debug(
+                "Wrote a batch of %d rows to %s",
+                len(batch_rows),
+                bag_file
+            )
+            batch_rows = []
+            del df_batch
+            gc.collect()
+
+    # Write any remaining rows.
+    if batch_rows:
+        df_batch = pd.DataFrame(batch_rows)
+        df_batch.to_parquet(
+            bag_file,
+            engine="fastparquet",
+            append=(bag_count > len(batch_rows)),
+            index=False
+        )
+        logging.debug(
+            "Wrote the final batch of %d rows to %s",
+            len(batch_rows),
+            bag_file
+        )
+        del df_batch
+        gc.collect()
+
+    logging.info("Created %d bags for split: %s", bag_count, split)
+
+
+def imbalance_adjustment(bag_file, split, configs, df):
+    """
+    Verifies if the number of bags per label in bag_file is
+    within imbalance_cap.
+    If not, generates additional bags for the minority label.
+
+    Args:
+        bag_file (str): Path to the Parquet file containing bags.
+        split (str): The current split (e.g., 'train', 'val').
+        config (object): Configuration with imbalance_cap, by_sample, etc.
+        df (pd.DataFrame): Original DataFrame for generating additional bags.
+    """
+    # Read the bag file and count bags per label
+    bags_df = pd.read_parquet(bag_file)
+    n0 = (bags_df["bag_label"] == 0).sum()
+    n1 = (bags_df["bag_label"] == 1).sum()
+    total = n0 + n1
+
+    if total == 0:
+        logging.warning("No bags found in %s for split %s", bag_file, split)
+        return
+
+    # Calculate imbalance as a percentage
+    imbalance = abs(n0 - n1) / total * 100
+    logging.info(
+        "Split %s: %d bags (label 0: %d, label 1: %d), imbalance %.2f%%",
+        split, total, n0, n1, imbalance
+    )
+
+    if imbalance > configs.imbalance_cap:
+        # Identify minority label
+        min_label = 0 if n0 < n1 else 1
+        n_min = n0 if min_label == 0 else n1
+        n_maj = n1 if min_label == 0 else n0
+
+        # Calculate how many bags are needed to balance (aim for equality)
+        num_needed = n_maj - n_min
+        logging.info(
+            "Imbalance %.2f%% exceeds cap %.2f%% in split %s, \
+            need %d bags for label %d",
+            imbalance,
+            configs.imbalance_cap,
+            split,
+            num_needed,
+            min_label
+        )
+
+        # Generate additional bags based on the bag creation method
+        if split in configs.by_sample:
+            bag_by_sample(
+                df,
+                split,
+                bag_file,
+                configs,
+                fixed_target_bags=(min_label, num_needed)
+            )
+        else:
+            bag_in_turns(
+                df,
+                split,
+                bag_file,
+                configs,
+                fixed_target_bags=(min_label, num_needed)
+            )
+
+        # Verify the new balance (optional, for logging)
+        updated_bags_df = pd.read_parquet(bag_file)
+        new_n0 = (updated_bags_df["bag_label"] == 0).sum()
+        new_n1 = (updated_bags_df["bag_label"] == 1).sum()
+        new_total = new_n0 + new_n1
+        new_imbalance = abs(new_n0 - new_n1) / new_total * 100
+        logging.info(
+            "After adjustment, split %s: %d bags (label 0: %d, label 1: %d), \
+            imbalance %.2f%%",
+            split,
+            new_total,
+            new_n0,
+            new_n1,
+            new_imbalance
+        )
+    else:
+        logging.info(
+            "Imbalance %.2f%% within cap %.2f%% for split %s, \
+            no adjustment needed",
+            imbalance,
+            configs.imbalance_cap,
+            split
+        )
+
+
+def truncate_bag(bag_file, split):
+    """
+    Truncates the bags in the bag_file to balance the counts of label 0
+    and label 1,
+    ensuring that the file is never left empty (at least one bag remains).
+
+    Args:
+        bag_file (str): Path to the Parquet file containing the bags.
+        split (str): The current split (e.g., 'train', 'val')
+        for logging purposes.
+
+    Returns:
+        None: Overwrites the bag_file with the truncated bags,
+        ensuring at least one bag remains.
+    """
+    logging.info("Truncating bags for split %s in file: %s", split, bag_file)
+
+    # Step 1: Read the bag file to get the total number of bags
     try:
-        with open(output_csv, mode=mode, encoding='utf-8', newline='') as csv_file:
-            csv_writer = csv.writer(csv_file, quoting=csv.QUOTE_MINIMAL)
-            headers = ["bag_samples", "bag_size", "bag_label", "split"]
-
-            # Handle empty input
-            if not list_embeddings:
-                if mode == "w":
-                    csv_writer.writerow(headers)
-                logging.info("No bags generated, wrote empty headers")
-                return
-
-            first_bag = list_embeddings[0]
-            if ludwig_format:
-                if not isinstance(first_bag["embedding"], str):
-                    raise ValueError("Embedding must be a string for Ludwig format")
-                headers.append("embedding")
-            else:
-                if not isinstance(first_bag["embedding"], np.ndarray):
-                    raise ValueError("Embedding must be NumPy array if not Ludwig")
-                headers.extend([f"vector{i + 1}" for i in range(len(first_bag["embedding"]))])
-
-            if mode == "w":
-                csv_writer.writerow(headers)
-
-            for i in range(0, len(list_embeddings), chunk_size):
-                chunk = list_embeddings[i:i + chunk_size]
-                rows = []
-                for bag in chunk:
-                    row = [",".join(map(str, bag["bag_samples"])),
-                           bag["bag_size"], bag["bag_label"], bag["split"]]
-                    if ludwig_format:
-                        row.append(bag["embedding"])  # Use the string directly
-                    else:
-                        row.extend(bag["embedding"].tolist())  # Expand NumPy array
-                    rows.append(row)
-                csv_writer.writerows(rows)
-                logging.info("Wrote %d bags to %s", len(rows), output_csv)
+        bags_df = pd.read_parquet(bag_file)
     except Exception as e:
-        logging.error("Error writing to %s: %s", output_csv, e)
-        raise
+        logging.error("Failed to read bag file %s: %s", bag_file, e)
+        return
+
+    total_bags = len(bags_df)
+    if total_bags == 0:
+        logging.warning("No bags found in %s for split %s", bag_file, split)
+        return
+
+    # Step 2: Count bags with label 0 and label 1
+    n0 = (bags_df["bag_label"] == 0).sum()
+    n1 = (bags_df["bag_label"] == 1).sum()
+    logging.info(
+        "Split %s: Total bags %d (label 0: %d, label 1: %d)",
+        split,
+        total_bags,
+        n0,
+        n1
+    )
+
+    # Determine the minority count and majority label
+    min_count = min(n0, n1)
+    majority_label = 0 if n0 > n1 else 1
+
+    if n0 == n1:
+        logging.info(
+            "Bags already balanced for split %s, no truncation needed",
+            split
+        )
+        return
+
+    # Step 3: Adjust min_count to ensure at least one bag remains
+    if min_count == 0:
+        logging.warning(
+            "Minority label has 0 bags in split %s, keeping 1 bag from \
+            majority label %d to avoid empty file",
+            split,
+            majority_label
+        )
+        min_count = 1  # Ensure at least one bag is kept
+
+    # Step 4: Truncate excess bags from the majority label
+    logging.info(
+        "Truncating %d bags from label %d to match %d bags per label",
+        max(0, (n0 if majority_label == 0 else n1) - min_count),
+        majority_label,
+        min_count
+    )
+
+    # Shuffle the majority label bags to randomly select which to keep
+    majority_bags = bags_df[
+        bags_df["bag_label"] == majority_label
+    ].sample(frac=1, random_state=None)
+
+    minority_bags = bags_df[bags_df["bag_label"] != majority_label]
+
+    # Keep only min_count bags from the majority label
+    majority_bags_truncated = majority_bags.iloc[:min_count]
+
+    # Combine the truncated majority and minority bags
+    truncated_bags_df = pd.concat(
+        [majority_bags_truncated,
+         minority_bags],
+        ignore_index=True
+    )
+
+    # Verify that the resulting DataFrame is not empty
+    if len(truncated_bags_df) == 0:
+        logging.error(
+            "Unexpected empty DataFrame after truncation for split %s, \
+            this should not happen",
+            split
+        )
+        return
+
+    # Step 5: Overwrite the bag file with the truncated bags
+    try:
+        truncated_bags_df.to_parquet(
+            bag_file,
+            engine="fastparquet",
+            index=False
+        )
+        logging.info(
+            "Overwrote %s with %d balanced bags (label 0: %d, label 1: %d)",
+            bag_file,
+            len(truncated_bags_df),
+            (truncated_bags_df["bag_label"] == 0).sum(),
+            (truncated_bags_df["bag_label"] == 1).sum()
+        )
+    except Exception as e:
+        logging.error("Failed to overwrite bag file %s: %s", bag_file, e)
 
 
-def generate_additional_bags(split_metadata, target_label, need, bag_sizes, pooling_method,
-                             use_gpu, embeddings_path):
-    """Generate additional bags for a specific label."""
-    split_df = pd.merge(split_metadata[split_metadata["label"] == target_label],
-                        pd.read_csv(embeddings_path), on="sample_name")
-    if split_df.empty:
-        logging.warning("No samples available to generate bags for label %d", target_label)
-        return []
-    df_np = split_df.to_numpy()
-    return bag_turns_process(df_np, bag_sizes, pooling_method, use_gpu, target_label, need)
+def columns_into_string(bag_file):
+    """
+    Reads the bag file (Parquet) from the given path, identifies
+    the vector columns
+    (i.e. columns not among 'sample_name', 'bag_label', 'split',
+    and 'bag_size'),
+    concatenates these vector values (as strings) into a single
+    whitespace‐separated string
+    stored in a new column "embeddings", drops the individual vector columns,
+    and writes the modified DataFrame back to the same Parquet file.
+
+    The final output format is:
+      "sample_name", "bag_label", "split", "bag_size", "embeddings"
+    """
+    logging.info(
+        "Converting vector columns into string for bag file: %s",
+        bag_file
+    )
+
+    try:
+        df = pd.read_parquet(bag_file, engine="fastparquet")
+    except Exception as e:
+        logging.error("Error reading bag file %s: %s", bag_file, e)
+        return
+
+    # Define non-vector columns.
+    non_vector = ["sample_name", "bag_label", "split", "bag_size"]
+
+    # Identify vector columns.
+    vector_columns = [col for col in df.columns if col not in non_vector]
+    logging.info("Identified vector columns: %s", vector_columns)
+
+    # Create new 'embeddings' column
+    # by converting vector columns to str and joining them
+    # using whitespace as the separator.
+    # Use apply() to ensure the result is a Series with one string per row.
+    df["embeddings"] = df[vector_columns].astype(str).apply(
+        lambda x: " ".join(x), axis=1
+    )
+    # Drop the original vector columns.
+    df.drop(columns=vector_columns, inplace=True)
+
+    try:
+        # Write the modified DataFrame back to the same bag file.
+        df.to_parquet(bag_file, engine="fastparquet", index=False)
+        logging.info(
+            "Conversion complete. Final columns: %s",
+            df.columns.tolist()
+        )
+    except Exception as e:
+        logging.error("Error writing updated bag file %s: %s", bag_file, e)
 
 
-def balance_bags_split(bags, imbalance_cap, split_metadata, bag_sizes, pooling_method,
-                       use_gpu, embeddings_path):
-    """Balance bags for a split according to imbalance cap."""
-    bags_0 = [b for b in bags if b["bag_label"] == 0]
-    bags_1 = [b for b in bags if b["bag_label"] == 1]
-    num_0, num_1 = len(bags_0), len(bags_1)
-    imbalance = abs(num_0 - num_1) / max(num_0 + num_1, 1) * 100
-    split = bags[0]["split"] if bags else split_metadata["split"].iloc[0]
-    logging.info("Initial imbalance for split %d: %.2f%% (0: %d, 1: %d)",
-                 split, imbalance, num_0, num_1)
+def processing_bag(configs, bag_file, temp_file, split):
+    """
+    Processes a single split and writes bag results
+    directly to the bag output Parquet file.
+    """
+    logging.info("Processing split %s using file: %s", split, temp_file)
+    df = pd.read_parquet(temp_file, engine="fastparquet")
 
-    if imbalance <= imbalance_cap:
-        return bags
-
-    majority_count = max(num_0, num_1)
-    minority_count = min(num_0, num_1)
-    target_count = max(minority_count, int(majority_count / (1 + imbalance_cap / 100)))
-    target_count = max(target_count, 1)  # Ensure at least one bag
-
-    if num_0 < num_1:  # Label 0 is minority
-        need = target_count - num_0
-        logging.info("Target count: %d, need %d bags for label 0", target_count, need)
-        extra_bags = generate_additional_bags(split_metadata, 0, need, bag_sizes,
-                                              pooling_method, use_gpu, embeddings_path)
-        bags.extend(extra_bags[:need])
-    elif num_1 < num_0:  # Label 1 is minority
-        need = target_count - num_1
-        logging.info("Target count: %d, need %d bags for label 1", target_count, need)
-        extra_bags = generate_additional_bags(split_metadata, 1, need, bag_sizes,
-                                              pooling_method, use_gpu, embeddings_path)
-        bags.extend(extra_bags[:need])
-
-    final_0, final_1 = len([b for b in bags if b["bag_label"] == 0]), len([b for b in bags if b["bag_label"] == 1])
-    final_imbalance = abs(final_0 - final_1) / max(final_0 + final_1, 1) * 100
-    logging.info("Final imbalance for split %d: %.2f%% (0: %d, 1: %d)",
-                 split, final_imbalance, final_0, final_1)
-    return bags
-
-
-def truncate_bags(split_bags):
-    """Truncates bags to balance the number of positive and negative bags, retaining at least one bag per label if possible."""
-    # Separate bags by label
-    bags_0 = [bag for bag in split_bags if bag["bag_label"] == 0]
-    bags_1 = [bag for bag in split_bags if bag["bag_label"] == 1]
-
-    # Case 1: No bags for either label
-    if len(bags_0) == 0 and len(bags_1) == 0:
-        logging.warning("No bags for either label in split. Returning empty list.")
-        return []
-
-    # Case 2: No bags with label 0, keep all label 1 bags
-    elif len(bags_0) == 0:
-        logging.info("No bags with label 0. Retaining all bags with label 1.")
-        return bags_1
-
-    # Case 3: No bags with label 1, keep all label 0 bags
-    elif len(bags_1) == 0:
-        logging.info("No bags with label 1. Retaining all bags with label 0.")
-        return bags_0
-
-    # Case 4: Both labels have bags, truncate to minority count
+    if configs.by_sample is not None and split in configs.by_sample:
+        bag_by_sample(df, split, bag_file, configs)
+    elif configs.balance_enforced:
+        bag_in_turns(df, split, bag_file, configs)
     else:
-        minority_count = min(len(bags_0), len(bags_1))
-        truncated_bags = bags_0[:minority_count] + bags_1[:minority_count]
-        logging.info("Truncated to %d bags per label.", minority_count)
-        return truncated_bags
+        bag_random(df, split, bag_file, configs)
+
+    # Free df if imbalance_adjustment is not needed
+    if configs.imbalance_cap is None:
+        del df
+        gc.collect()
+
+    if configs.imbalance_cap is not None:
+        imbalance_adjustment(bag_file, split, configs, df)
+        del df
+        gc.collect()
+    elif configs.truncate_bags:
+        truncate_bag(bag_file, split)
+
+    if configs.ludwig_format:
+        columns_into_string(bag_file)
+
+    return bag_file
 
 
-def transform_bags_for_ludwig(bags):
-    """Transforms bags into Ludwig format."""
-    return [dict(bag, embedding=" ".join(map(str, bag["embedding"])))
-            for bag in bags]
+def write_final_csv(output_csv, bag_file_paths):
+    """
+    Merges all Parquet files into a single CSV file,
+    processing one file at a time to minimize memory usage.
 
+    Args:
+        output_csv (str): Path to the output CSV file specified
+        in config.output_csv.
+        bag_file_paths (list): List of paths to the Parquet files
+        for each split.
 
-def process_split(split, metadata, pooling_method, balance_enforced,
-                  bag_sizes, use_gpu, split_temp_files, by_sample_set,
-                  embeddings_path, imbalance_cap, do_truncate_bags,
-                  split_bag_output):
-    """Processes a single split and returns bags."""
-    logging.info("Processing split: %d", split)
-    split_metadata = metadata[metadata["split"] == split]
-    split_temp_file = split_temp_files.get(split)
-    if not split_temp_file or not os.path.exists(split_temp_file):
-        logging.warning("No temp file for split %d", split)
-        return []
-    split_embeddings = pd.read_csv(split_temp_file)
-    split_bags = []
+    Returns:
+        str: Path to the output CSV file.
+    """
+    logging.info("Merging Parquet files into final CSV: %s", output_csv)
 
-    # Bag creation logic (unchanged)
-    if split in by_sample_set:
-        for sample_name in split_embeddings["sample_name"].unique():
-            sample_chunk = split_embeddings[
-                split_embeddings["sample_name"] == sample_name]
-            sample_df = pd.merge(split_metadata[
-                split_metadata["sample_name"] == sample_name],
-                sample_chunk, on="sample_name")
-            if not sample_df.empty:
-                bags = bag_by_sample_process(sample_df, pooling_method,
-                                             bag_sizes, use_gpu)
-                split_bags.extend(bags)
-    else:
-        split_df = pd.merge(split_metadata, split_embeddings,
-                            on="sample_name")
-        if not split_df.empty:
-            df_np = split_df.to_numpy()
-            if balance_enforced:
-                bags = bag_turns_process(df_np, bag_sizes, pooling_method,
-                                         use_gpu)
-            else:
-                bags = bag_random_process(df_np, bag_sizes, pooling_method,
-                                          use_gpu)
-            split_bags.extend(bags)
+    first_file = True  # Flag to determine if we need to write the header
+    total_rows_written = 0
 
-    # Apply imbalance cap if specified
-    if split_bags and imbalance_cap is not None:
-        split_bags = balance_bags_split(
-            split_bags, imbalance_cap, split_metadata, bag_sizes,
-            pooling_method, use_gpu, embeddings_path)  # Fixed: 7 arguments only
-
-    # Apply truncation if enabled
-    if do_truncate_bags:
-        split_bags = truncate_bags(split_bags)
-
-    # Write bags to CSV only if there are bags
-    if split_bags:  # New check
+    # Process each Parquet file sequentially
+    for bag_file in bag_file_paths:
         try:
-            with open(split_bag_output, "a", newline="") as sf:
-                writer = csv.DictWriter(sf, fieldnames=split_bags[0].keys())
-                if os.stat(split_bag_output).st_size == 0:
-                    writer.writeheader()
-                writer.writerows(split_bags)
+            # Skip empty or invalid files
+            if os.path.getsize(bag_file) == 0:
+                logging.warning(
+                    "Parquet file %s is empty (zero size), skipping",
+                    bag_file
+                )
+                continue
+
+            # Load the Parquet file into a DataFrame
+            df = pd.read_parquet(bag_file, engine="fastparquet")
+            if df.empty:
+                logging.warning("Parquet file %s is empty, skipping", bag_file)
+                continue
+
+            logging.info("Loaded %d rows from Parquet file: %s, columns: %s",
+                         len(df), bag_file, list(df.columns))
+
+            # Write the DataFrame to the CSV file
+            # - For the first file, write with header (mode='w')
+            # - For subsequent files, append without header (mode='a')
+            mode = 'w' if first_file else 'a'
+            header = first_file  # Write header only for the first file
+            df.to_csv(output_csv, mode=mode, header=header, index=False)
+            total_rows_written += len(df)
+
+            logging.info(
+                "Wrote %d rows from %s to CSV, total rows written: %d",
+                len(df), bag_file, total_rows_written
+            )
+
+            # Clear memory
+            del df
+            gc.collect()
+
+            first_file = False
+
         except Exception as e:
-            logging.error("Error writing to %s: %s", split_bag_output, e)
-            raise
-    else:
-        logging.info("No bags to write for split %d after processing", split)
+            logging.error("Failed to process Parquet file %s: %s", bag_file, e)
+            continue
 
-    logging.info("Finished split %d with %d bags", split, len(split_bags))
-    return split_bags
+    # Check if any rows were written
+    if total_rows_written == 0:
+        logging.error(
+            "No valid data loaded from Parquet files, cannot create CSV"
+        )
+        raise ValueError("No data available to write to CSV")
 
-
-def validate_metadata(metadata):
-    """Validates metadata for required columns."""
-    required_cols = {"sample_name", "label"}
-    if not required_cols.issubset(metadata.columns):
-        missing = required_cols - set(metadata.columns)
-        raise ValueError(f"Metadata missing columns: {missing}")
-    return metadata
-
-def setup_temp_files(splits):
-    """Sets up temporary files for splits and bag outputs."""
-    split_temp_files = {
-        split: tempfile.mkstemp(prefix=f"split_{split}_",
-                                suffix=".csv", dir=os.getcwd())[1]
-        for split in splits
-    }
-    split_bag_outputs = {
-        split: tempfile.mkstemp(prefix=f"split_bags_{split}_",
-                                suffix=".csv", dir=os.getcwd())[1]
-        for split in splits
-    }
-    return split_temp_files, split_bag_outputs
-
-def distribute_embeddings(embeddings_path, metadata, split_temp_files):
-    """Distributes embeddings to temporary split files."""
-    buffer_size = 50000
-    buffers = {temp_file: [] for temp_file in split_temp_files.values()}
-    logging.info("Distributing embeddings from %s to temp files",
-                 embeddings_path)
-    sample_to_split = dict(zip(metadata["sample_name"], metadata["split"]))
-
-    try:
-        for chunk in pd.read_csv(embeddings_path, chunksize=50000):
-            for _, row in chunk.iterrows():
-                sample_name = row["sample_name"]
-                if sample_name in sample_to_split:
-                    split = sample_to_split[sample_name]
-                    temp_file = split_temp_files.get(split)
-                    if temp_file:
-                        buffers[temp_file].append(row.tolist())
-                        if len(buffers[temp_file]) >= buffer_size:
-                            with open(temp_file, "a", newline="") as tf:
-                                writer = csv.writer(tf)
-                                if os.stat(temp_file).st_size == 0:
-                                    writer.writerow(chunk.columns.tolist())
-                                writer.writerows(buffers[temp_file])
-                            buffers[temp_file] = []
-    except Exception as e:
-        logging.error("Error distributing embeddings: %s", e)
-        raise
-
-    for temp_file, rows in buffers.items():
-        if rows:
-            try:
-                with open(temp_file, "a", newline="") as tf:
-                    writer = csv.writer(tf)
-                    if os.stat(temp_file).st_size == 0:
-                        writer.writerow(chunk.columns.tolist())
-                    writer.writerows(rows)
-            except Exception as e:
-                logging.error("Error writing buffer to %s: %s", temp_file, e)
-                raise
+    logging.info(
+        "Successfully wrote %d rows to final CSV: %s",
+        total_rows_written,
+        output_csv
+    )
+    return output_csv
 
 
-def process_splits(splits, metadata, pooling_method, balance_enforced,
-                   bag_sizes, use_gpu, split_temp_files, by_sample_set,
-                   embeddings_path, imbalance_cap, do_truncate_bags,
-                   split_bag_outputs):
+def process_splits(configs, embedding_files, bag_files):
     """Processes splits in parallel and returns all bags."""
+    splits = [0, 1, 2]  # Consistent with setup_temp_files()
+
+    # Filter non-empty split files
+    valid_info = []
+    for split in splits:
+        temp_file = embedding_files[split]
+        bag_file = bag_files[split]
+        if os.path.getsize(temp_file) > 0:  # Check if file has content
+            valid_info.append((configs, bag_file, temp_file, split))
+        else:
+            logging.info("Skipping empty split file: %s", temp_file)
+
+    if not valid_info:
+        logging.warning("No non-empty split files to process")
+        return []
+
+    # Process splits in parallel and collect bag file paths
+    bag_file_paths = []
     with mp.Pool(processes=mp.cpu_count()) as pool:
-        args = [(split, metadata, pooling_method, balance_enforced,
-                 bag_sizes, use_gpu, split_temp_files, by_sample_set,
-                 embeddings_path, imbalance_cap, do_truncate_bags,
-                 split_bag_outputs[split]) for split in splits]
-        logging.info("Arguments to process_split: %s", args[0][1])  # Log first args for debugging
-        results = pool.starmap(process_split, args)
-    all_bags = [bag for result in results for bag in result]
-    logging.info("Collected %d total bags from all splits", len(all_bags))
-    return all_bags
+        logging.info("Starting multiprocessing")
+        bag_file_paths = pool.starmap(processing_bag, valid_info)
+        logging.info("Multiprocessing is done")
+
+    # Write the final CSV by merging the Parquet files
+    output_file = write_final_csv(configs.output_csv, bag_file_paths)
+    return output_file
 
 
-def write_final_output(output_csv, all_bags, ludwig_format):
-    """Writes the final output to CSV."""
-    if all_bags:
-        if ludwig_format:
-            all_bags = transform_bags_for_ludwig(all_bags)
-        write_csv(output_csv, all_bags, append=False,
-                  ludwig_format=ludwig_format)
-        logging.info("Completed bagging, wrote to %s", output_csv)
-    else:
-        logging.info("No bags to write to CSV")
-
-def cleanup_temp_files(split_temp_files, split_bag_outputs):
-    """Cleans up temporary files."""
-    for temp_file in split_temp_files.values():
+def cleanup_temp_files(split_files, bag_outputs):
+    """Cleans up temporary Parquet files."""
+    for temp_file in split_files.values():
         try:
             os.remove(temp_file)
             logging.info("Cleaned up temp file: %s", temp_file)
         except Exception as e:
             logging.error("Error removing %s: %s", temp_file, e)
-    for split_bag_output in split_bag_outputs.values():
+    for bag_output in bag_outputs.values():
         try:
-            os.remove(split_bag_output)
-            logging.info("Cleaned up temp bag file: %s", split_bag_output)
+            os.remove(bag_output)
+            logging.info("Cleaned up temp bag file: %s", bag_output)
         except Exception as e:
-            logging.error("Error removing %s: %s", split_bag_output, e)
-
-def bag_processing(embeddings_path, metadata, pooling_method,
-                   balance_enforced, bag_sizes, repeats, ludwig_format,
-                   by_sample, use_gpu, output_csv, imbalance_cap,
-                   do_truncate_bags):
-    """Processes bags from embeddings and metadata."""
-    bag_sizes = parse_bag_size(bag_sizes)
-    if not isinstance(bag_sizes, list) or len(bag_sizes) != 2:
-        raise ValueError(f"bag_sizes must be a list of two integers, got: {bag_sizes}")
-    metadata = validate_metadata(metadata)
-    splits = metadata["split"].unique()
-    logging.info("Processing %d splits: %s", len(splits), list(splits))
-    by_sample_set = set(by_sample) if by_sample else set()
-    split_temp_files, split_bag_outputs = setup_temp_files(splits)
-    all_bags = []
-
-    imbalance_cap = None if imbalance_cap in (None, "", "None") else int(imbalance_cap)
-
-    try:
-        for _ in range(max(1, repeats)):
-            distribute_embeddings(embeddings_path, metadata, split_temp_files)
-            bags = process_splits(splits, metadata, pooling_method,
-                                  balance_enforced, bag_sizes, use_gpu,
-                                  split_temp_files, by_sample_set,
-                                  embeddings_path, imbalance_cap,
-                                  do_truncate_bags, split_bag_outputs)
-            all_bags.extend(bags)
-        write_final_output(output_csv, all_bags, ludwig_format)
-    finally:
-        cleanup_temp_files(split_temp_files, split_bag_outputs)
+            logging.error("Error removing %s: %s", bag_output, e)
 
 
 if __name__ == "__main__":
-    # Set multiprocessing start method to 'spawn' to support CUDA
     mp.set_start_method('spawn', force=True)
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
 
-    logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s - %(levelname)s - %(message)s')
     parser = argparse.ArgumentParser(
-        description="Create bags from embeddings and metadata")
-    parser.add_argument("--embeddings_csv", type=str, required=True,
-                        help="Path to embeddings CSV")
-    parser.add_argument("--metadata_csv", type=str, required=True,
-                        help="Path to metadata CSV")
-    parser.add_argument("--split_proportions", type=str,
-                        default='0.7,0.1,0.2',
-                        help="Proportions for train, val, test splits")
-    parser.add_argument("--dataleak", action="store_true",
-                        help="Prevents data leakage")
-    parser.add_argument("--balance_enforced", action="store_true",
-                        help="Enforce balanced bagging")
-    parser.add_argument("--bag_size", type=str, required=True,
-                        help="Bag size (e.g., '4' or '3-5')")
-    parser.add_argument("--pooling_method", type=str, required=True,
-                        help="Pooling method")
-    parser.add_argument("--by_sample", type=parse_by_sample, default=None,
-                        help="Splits to bag by sample")
-    parser.add_argument("--repeats", type=int, default=1,
-                        help="Number of bagging repeats")
-    parser.add_argument("--ludwig_format", action="store_true",
-                        help="Output in Ludwig format")
-    parser.add_argument("--output_csv", type=str, required=True,
-                        help="Path to output CSV")
-    parser.add_argument("--random_seed", type=int, default=42,
-                        help="Random seed")
-    parser.add_argument("--imbalance_cap", type=int, default=None,
-                        help="Max imbalance percentage")
-    parser.add_argument("--truncate_bags", action="store_true",
-                        help="Truncate bags for balance")
-    parser.add_argument("--use_gpu", action="store_true", default=False,
-                        help="Use GPU for pooling")
+        description="Create bags from embeddings and metadata"
+    )
+    parser.add_argument(
+        "--embeddings_csv", type=str, required=True,
+        help="Path to embeddings CSV"
+    )
+    parser.add_argument(
+        "--metadata_csv", type=str, required=True,
+        help="Path to metadata CSV"
+    )
+    parser.add_argument(
+        "--split_proportions", type=str, default='0.7,0.1,0.2',
+        help="Proportions for train, val, test splits"
+    )
+    parser.add_argument(
+        "--dataleak", action="store_true",
+        help="Prevents data leakage"
+    )
+    parser.add_argument(
+        "--balance_enforced", action="store_true",
+        help="Enforce balanced bagging"
+    )
+    parser.add_argument(
+        "--bag_size", type=str, required=True,
+        help="Bag size (e.g., '4' or '3-5')"
+    )
+    parser.add_argument(
+        "--pooling_method", type=str, required=True,
+        help="Pooling method"
+    )
+    parser.add_argument(
+        "--by_sample", type=str, default=None,
+        help="Splits to bag by sample"
+    )
+    parser.add_argument(
+        "--repeats", type=int, default=1,
+        help="Number of bagging repeats"
+    )
+    parser.add_argument(
+        "--ludwig_format", action="store_true",
+        help="Output in Ludwig format"
+    )
+    parser.add_argument(
+        "--output_csv", type=str, required=True,
+        help="Path to output CSV"
+    )
+    parser.add_argument(
+        "--random_seed", type=int, default=42,
+        help="Random seed"
+    )
+    parser.add_argument(
+        "--imbalance_cap", type=int, default=None,
+        help="Max imbalance percentage"
+    )
+    parser.add_argument(
+        "--truncate_bags", action="store_true",
+        help="Truncate bags for balance"
+    )
+    parser.add_argument(
+        "--use_gpu", action="store_true",
+        help="Use GPU for pooling"
+    )
     args = parser.parse_args()
-    print(f"Starting bagging with args: {args}", flush=True)
 
-    if args.random_seed is not None:
-        np.random.seed(args.random_seed)
-        torch.manual_seed(args.random_seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(args.random_seed)
-            torch.backends.cudnn.deterministic = True
-            torch.backends.cudnn.benchmark = False
-        print(f"Random seed set to {args.random_seed}", flush=True)
+    config = BaggingConfig(args)
+    logging.info("Starting bagging with args: %s", config)
 
-    metadata_csv = load_metadata(args.metadata_csv)
-    if "split" not in metadata_csv.columns:
-        metadata_csv = split_data(
-            metadata_csv, split_proportions=args.split_proportions,
-            dataleak=args.dataleak)
-    bag_processing(
-        embeddings_path=args.embeddings_csv,
-        metadata=metadata_csv,
-        pooling_method=args.pooling_method,
-        balance_enforced=args.balance_enforced,
-        bag_sizes=args.bag_size,
-        repeats=args.repeats,
-        ludwig_format=args.ludwig_format,
-        by_sample=args.by_sample,
-        use_gpu=args.use_gpu,
-        output_csv=args.output_csv,
-        imbalance_cap=args.imbalance_cap,
-        do_truncate_bags=args.truncate_bags)
+    set_random_seed(config)
+
+    metadata_csv = load_metadata(config.metadata_csv)
+    if config.prevent_leakage:
+        metadata_csv = split_dataset(metadata_csv, config)
+
+    split_temp_files, split_bag_outputs = setup_temp_files()
+
+    try:
+        logging.info("Writing embeddings to split temp Parquet files")
+        distribute_embeddings(config, metadata_csv, split_temp_files)
+
+        logging.info("Processing embeddings for each split")
+        bags = process_splits(config, split_temp_files, split_bag_outputs)
+        logging.info("Bags processed. File generated: %s", bags)
+
+    finally:
+        cleanup_temp_files(split_temp_files, split_bag_outputs)
